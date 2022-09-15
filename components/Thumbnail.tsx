@@ -5,16 +5,17 @@ type ThumbnailProps = {
   title: string;
   src: string;
   slug?: string;
+  layoutType?: 'fixed';
 }
 
-const Thumbnail: React.FC<ThumbnailProps> = ({title, src, slug}: ThumbnailProps) => {
+const Thumbnail: React.FC<ThumbnailProps> = ({title, layoutType, src, slug}: ThumbnailProps) => {
   const image = (
     <Image
       src={src}
       alt={`Cover image for ${title}`}
       width={2400}
       height={1600}
-      layout="responsive"
+      layout={layoutType? layoutType: "responsive" }
       object-fit="cover"
     />
   );

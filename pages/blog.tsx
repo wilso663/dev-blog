@@ -27,7 +27,6 @@ const FeaturedArticles:React.FC<PostProps> = ({posts}) => {
 }
 const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   
-  console.log(posts)
   //Because there will always be 4 featured articles, I'm hard coding the reference to them here
   const mainArticle = posts[0]
   const articleTwo = posts[1]
@@ -36,12 +35,13 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const otherArticles = posts.slice(4)
 
   return (
-    <div className="blog--container ml-4 mr-4 md:ml-32 md:mr-32">
-      <Navbar/>
+    <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
+      <Navbar />
       <div className="articles__container">
-        <div className="articles__featured--main w-full">
-          <article className="main-article">
-            <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>
+      <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>
+        <div className="articles__featured--main w-full grid md:grid-cols-2 border-2 border-indigo-600">
+          <article className="main-article md:mr-4 mb-4">
+  
             <div className="">
               <div className="mb-4">
                 <Thumbnail
@@ -55,13 +55,50 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
                 <p className="text-sm text-gray-300">Image by {mainArticle.thumbnailAttr} </p>
               </div>
               <p className="text-2xl font-bold mb-2">{mainArticle.title}</p>
-              <p className="text-xs sm:text-lg">{mainArticle.description}</p>
+              <p className="text-xs">{mainArticle.description}</p>
             </div>
           </article>
-          <div className="articles__featured--other">
-            <article></article>
-            <article></article>
-            <article></article>
+          <div className="articles__featured--other md:col-start-2 ">
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 pb-3'>
+              <div className="mr-4">
+                <Thumbnail
+                  slug={articleTwo.slug}
+                  title={articleTwo.title}
+                  src={articleTwo.thumbnail}
+                />
+              </div>
+              <div className="article__featured--other-info " >
+                <p className="text-sm text-gray-300">{articleTwo.date}</p>
+                <p className="text-md font-bold">{articleTwo.title}</p>
+              </div>
+            </article>
+
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-3 pb-3'>
+              <div className=" mr-4">
+                <Thumbnail
+                  slug={articleThree.slug}
+                  title={articleThree.title}
+                  src={articleThree.thumbnail}
+                  />
+              </div>
+              <div className="article__featured--other-info ">
+                <p className="text-sm text-gray-300">{articleThree.date}</p>
+                <p className="text-md font-bold">{articleThree.title}</p>
+              </div>
+            </article>
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-3 pb-3'>
+              <div className=" mr-4">
+                <Thumbnail
+                  slug={articleFour.slug}
+                  title={articleFour.title}
+                  src={articleFour.thumbnail}
+                  />
+              </div>
+              <div className="article__featured--other-info ">
+                <p className="text-sm text-gray-300">{articleFour.date}</p>
+                <p className="text-md font-bold">{articleFour.title}</p>
+              </div>
+            </article>
           </div>
         </div>
       </div>
