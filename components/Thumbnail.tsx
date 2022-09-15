@@ -12,8 +12,10 @@ const Thumbnail: React.FC<ThumbnailProps> = ({title, src, slug}: ThumbnailProps)
     <Image
       src={src}
       alt={`Cover image for ${title}`}
-      width={500}
-      height={500}
+      width={2400}
+      height={1600}
+      layout="responsive"
+      object-fit="cover"
     />
   );
 

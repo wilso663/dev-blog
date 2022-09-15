@@ -1,6 +1,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
+import * as path from 'path'
 
 type Items = {
   [key: string]: string
@@ -56,6 +57,7 @@ export function getAllPosts(fields: string[] = []): Items[] {
   const filePaths = getPostFilePaths()
   const posts = filePaths
                 .map((filePath) => getPostItems(filePath, fields))
-                .sort((post1,post2) => (post1.date > post2.date ? -1 : 1))
+                .sort((post1,post2) => (Date.parse(post1.date) > Date.parse(post2.date) ? -1 : 1))
   return posts
 }
+
