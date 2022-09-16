@@ -26,7 +26,6 @@ const FeaturedArticles:React.FC<PostProps> = ({posts}) => {
   )
 }
 const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
-  
   //Because there will always be 4 featured articles, I'm hard coding the reference to them here
   const mainArticle = posts[0]
   const articleTwo = posts[1]
@@ -100,12 +99,25 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
             </article>
           </div>
         </div>
-        <div className="articles__previous--main w-full grid grid-cols-1">
+        <h2 className="text-3xl font-bold mt-8 mb-8">Previous Articles</h2>
+        <div className="articles__previous--main w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          
           {otherArticles.map((article, index) => {
             return (
-              <div>
-                
+            <article key={index} className='grid grid-cols-1 pb-5 mr-4 mb-5'>
+              <div className="">
+                <Thumbnail
+                  slug={article.slug}
+                  title={article.title}
+                  src={article.thumbnail}
+                />
               </div>
+              <div className="article__previous--other-info " >
+                <p className="text-sm text-gray-300 mt-2">{article.date}</p>
+                <p className="text-3xl sm:text-2xl md:text-lg lg:text-2xl font-bold">{article.title}</p>
+              </div>
+            </article>
+
             )
           })}
         </div>
