@@ -39,10 +39,10 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
       <Navbar />
       <div className="articles__container">
       <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>
-        <div className="articles__featured--main w-full grid md:grid-cols-2 border-2 border-indigo-600">
+        <div className="articles__featured--main w-full grid md:grid-cols-2">
           <article className="main-article md:mr-4 mb-4">
   
-            <div className="">
+            <div className="mb-4">
               <div className="mb-4">
                 <Thumbnail
                   slug={mainArticle.slug}
@@ -52,14 +52,13 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               </div>
               <div className="article__attributes flex mb-2 align-middle justify-between">
                 <p className="text-sm text-gray-300">{mainArticle.date}</p>
-                <p className="text-sm text-gray-300">Image by {mainArticle.thumbnailAttr} </p>
               </div>
-              <p className="text-2xl font-bold mb-2">{mainArticle.title}</p>
-              <p className="text-xs">{mainArticle.description}</p>
+              <p className="text-2xl lg:text-4xl font-bold mb-2">{mainArticle.title}</p>
+              <p className="md:text-sm lg:text-lg">{mainArticle.description}</p>
             </div>
           </article>
           <div className="articles__featured--other md:col-start-2 ">
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 pb-3'>
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 pb-5'>
               <div className="mr-4">
                 <Thumbnail
                   slug={articleTwo.slug}
@@ -69,11 +68,11 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               </div>
               <div className="article__featured--other-info " >
                 <p className="text-sm text-gray-300">{articleTwo.date}</p>
-                <p className="text-md font-bold">{articleTwo.title}</p>
+                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleTwo.title}</p>
               </div>
             </article>
 
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-3 pb-3'>
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-5 pb-5'>
               <div className=" mr-4">
                 <Thumbnail
                   slug={articleThree.slug}
@@ -83,10 +82,10 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               </div>
               <div className="article__featured--other-info ">
                 <p className="text-sm text-gray-300">{articleThree.date}</p>
-                <p className="text-md font-bold">{articleThree.title}</p>
+                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleThree.title}</p>
               </div>
             </article>
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-3 pb-3'>
+            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-5 pb-5'>
               <div className=" mr-4">
                 <Thumbnail
                   slug={articleFour.slug}
@@ -96,10 +95,19 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               </div>
               <div className="article__featured--other-info ">
                 <p className="text-sm text-gray-300">{articleFour.date}</p>
-                <p className="text-md font-bold">{articleFour.title}</p>
+                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleFour.title}</p>
               </div>
             </article>
           </div>
+        </div>
+        <div className="articles__previous--main w-full grid grid-cols-1">
+          {otherArticles.map((article, index) => {
+            return (
+              <div>
+                
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
