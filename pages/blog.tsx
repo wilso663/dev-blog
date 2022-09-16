@@ -104,7 +104,7 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
           
           {otherArticles.map((article, index) => {
             return (
-            <article key={index} className='grid grid-cols-1 pb-5 mr-4 mb-5'>
+            <article key={index} className='pb-5 mr-4 mb-5'>
               <div className="">
                 <Thumbnail
                   slug={article.slug}

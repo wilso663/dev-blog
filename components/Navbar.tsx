@@ -6,7 +6,7 @@ const Navbar: React.FC = () => {
       <p className="text-lg font-bold">Stephen Wilson</p>
       <div className="navbar--links flex flex-col md:flex-row">
         <Link href="/blog">
-          <a href="" className="text-lg font-bold mr-3">Blog</a>
+          <a href="/blog" className="text-lg font-bold mr-3">Blog</a>
         </Link>
         <Link href="/">
           <a href="/" className="text-lg font-bold text-gray-300 mr-3">Portfolio</a>
