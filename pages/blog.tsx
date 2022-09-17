@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {GetStaticProps} from 'next'
 import { NextPage } from 'next'
 import fs from 'fs'
@@ -7,25 +8,15 @@ import { IPost } from '../types/post'
 import { getAllPosts } from '../utils/mdxUtils'
 import Thumbnail from '../components/Thumbnail'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 type PostProps = {
   posts: IPost[];
 }
-const FeaturedArticles:React.FC<PostProps> = ({posts}) => {
-  return (
-      <div className="articles__featured">
-        <article className="main-article">
-          <p></p>
-        </article>
-        <div className="articles__other">
-          <article></article>
-          <article></article>
-          <article></article>
-        </div>
-      </div>
-  )
-}
+
 const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
+
+  const [pageNumber, setPageNumber] = useState(0)
   //Because there will always be 4 featured articles, I'm hard coding the reference to them here
   const mainArticle = posts[0]
   const articleTwo = posts[1]
@@ -33,9 +24,39 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const articleFour = posts[3]
   const otherArticles = posts.slice(4)
 
+  //I'm wanting the previous article pagination to hold 6 articles at a time
+  const PAGE_LENGTH = 6
+  let currentOtherArticles = otherArticles.slice(pageNumber * PAGE_LENGTH, PAGE_LENGTH * (pageNumber+1))
+  
+  useEffect(() => {
+    currentOtherArticles = otherArticles.slice(pageNumber * PAGE_LENGTH, PAGE_LENGTH * (pageNumber+1))
+  }, [pageNumber])
+
+  const handlePrevClick = () => {
+    if(pageNumber === 0){
+      //Do nothing
+    } else if(pageNumber > 0){
+      setPageNumber(pageNumber - 1)
+    } else {
+      //in case pageNumber has been set to something it shouldn't, reset it to 0
+      setPageNumber(0)
+    }
+  }
+
+  const handleNextClick = () => {
+    if(pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1){
+      //Do nothing
+    } else if(pageNumber < Math.ceil(otherArticles.length/PAGE_LENGTH)-1){
+      setPageNumber(pageNumber + 1)
+    } else {
+      //in case pageNumber has been set to something it shouldn't, reset it to the last page
+      setPageNumber(Math.ceil(otherArticles.length/PAGE_LENGTH)-1)
+    }
+  }
+
   return (
-    <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
-      <Navbar />
+    <>    <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
+      <Navbar isBlogPage={true} />
       <div className="articles__container">
       <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>
         <div className="articles__featured--main w-full grid md:grid-cols-2">
@@ -100,11 +121,11 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
           </div>
         </div>
         <h2 className="text-3xl font-bold mt-8 mb-8">Previous Articles</h2>
-        <div className="articles__previous--main w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="articles__previous--main w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3">
           
-          {otherArticles.map((article, index) => {
+          {currentOtherArticles.map((article, index) => {
             return (
-            <article key={index} className='pb-5 mr-4 mb-5'>
+            <article key={index} className='pb-5 mr-4 lg:mr-8 mb-5'>
               <div className="">
                 <Thumbnail
                   slug={article.slug}
@@ -114,15 +135,23 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               </div>
               <div className="article__previous--other-info " >
                 <p className="text-sm text-gray-300 mt-2">{article.date}</p>
-                <p className="text-3xl sm:text-2xl md:text-lg lg:text-2xl font-bold">{article.title}</p>
+                <p className="xs:text-lg sm:text-xl md:text-lg lg:text-2xl font-bold">{article.title}</p>
               </div>
             </article>
-
             )
           })}
+
+        </div>
+        <div className="page--buttons flex align-center justify-center mb-5">
+            <button className="bg-slate-800 text-white" onClick={handlePrevClick}>&lt;&lt; Prev</button>
+            <a className="bg-gray-100 text-red-500">Page {pageNumber+1}</a>
+            <button className="bg-slate-800 text-white" onClick={handleNextClick}>&gt;&gt; Next</button>
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
+
   )
 }
 

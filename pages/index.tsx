@@ -6,6 +6,8 @@ import styles from '../styles/Home.module.css'
 import fs from 'fs'
 import * as path from 'path'
 import matter from 'gray-matter'
+import Navbar from '../components/Navbar'
+
 
 export interface PostsType {
   frontMatter: {
@@ -23,6 +25,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=Inter" rel="stylesheet"></link>
       </Head>
+      <Navbar isBlogPage={false}/>
       <p>Da hom page</p>
     </div>
   )
