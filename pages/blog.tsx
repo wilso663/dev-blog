@@ -8,6 +8,7 @@ import { IPost } from '../types/post'
 import { getAllPosts } from '../utils/mdxUtils'
 import Thumbnail from '../components/Thumbnail'
 import Navbar from '../components/Navbar'
+import BlogNav from '../components/BlogNav'
 import Footer from '../components/Footer'
 
 type PostProps = {
@@ -27,6 +28,7 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const whiteTextClass = 'text-white'
   //I'm wanting the previous article pagination to hold 6 articles at a time
   const PAGE_LENGTH = 6
+  //Get the articles that will be displayed on the pagination portion of the page
   let currentOtherArticles = otherArticles.slice(pageNumber * PAGE_LENGTH, PAGE_LENGTH * (pageNumber+1))
   
   useEffect(() => {
@@ -56,8 +58,10 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   }
 
   return (
-    <>    <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
-      <Navbar isBlogPage={true} />
+    <>    
+    <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
+      {/* <Navbar isBlogPage={true} /> */}
+      <BlogNav/>
       <div className="articles__container">
       <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>
         <div className="articles__featured--main w-full grid md:grid-cols-2">
