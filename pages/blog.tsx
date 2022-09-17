@@ -23,7 +23,8 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const articleThree = posts[2]
   const articleFour = posts[3]
   const otherArticles = posts.slice(4)
-
+  const grayTextClass = 'text-gray-400'
+  const whiteTextClass = 'text-white'
   //I'm wanting the previous article pagination to hold 6 articles at a time
   const PAGE_LENGTH = 6
   let currentOtherArticles = otherArticles.slice(pageNumber * PAGE_LENGTH, PAGE_LENGTH * (pageNumber+1))
@@ -143,9 +144,9 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
 
         </div>
         <div className="page--buttons flex align-center justify-center mb-5">
-            <button className="bg-slate-800 text-white" onClick={handlePrevClick}>&lt;&lt; Prev</button>
-            <a className="bg-gray-100 text-red-500">Page {pageNumber+1}</a>
-            <button className="bg-slate-800 text-white" onClick={handleNextClick}>&gt;&gt; Next</button>
+            <button className={`rounded-l-lg p-2 bg-slate-800 ${pageNumber === 0 ? grayTextClass : whiteTextClass}`} onClick={handlePrevClick}>&lt;&lt; Prev</button>
+            <span className="p-2 bg-slate-800 text-white">Page {pageNumber+1}</span>
+            <button  className={`rounded-r-lg p-2 bg-slate-800 ${pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1 ? grayTextClass : whiteTextClass}`} onClick={handleNextClick}> Next &gt;&gt;</button>
         </div>
       </div>
     </div>
