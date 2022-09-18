@@ -5,9 +5,8 @@ import Image from 'next/image'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 
-import Navbar from '../../components/Navbar'
-import Layout from '../../components/Layout'
-import Thumbnail from '../../components/Thumbnail'
+import BlogNav from '../../components/BlogNav'
+import Footer from '../../components/Footer'
 import StrayButton from '../../components/StrayButton'
 import { IPost } from '../../types/post'
 import { getPost, getAllPosts } from '../../utils/mdxUtils'
@@ -22,8 +21,9 @@ const components = { StrayButton }
 
 const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps) => {
   return(
-  <div className="ml-4 mr-4 md:ml-28 md:mr-28">
-    <Navbar/>
+    <>
+  <div className="ml-4 mr-4 mb-8 md:ml-28 md:mr-28">
+    <BlogNav/>
     
     <div className="mb-4 mt-10 w-full max-w-5xl mx-auto">
     <h1 className="font-bold text-3xl md:text-5xl mb-6">{frontMatter.title}</h1>  
@@ -37,7 +37,7 @@ const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps)
         />
       </div>
     <div className="prose pt-4 w-full max-w-5xl mx-auto" style={{width: '100%'}}>
-      <article className="">
+      <article className="mb-4 pb-8">
  
  
       <p className="text-sm text-gray-300">{frontMatter.date}</p>
@@ -45,11 +45,13 @@ const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps)
 
       <MDXRemote {...source} components={components} />
       </article>
-      <Link href="/blog">
-          <a href="/blog" className="text-lg bg-black-500 br-9 font-bold text-gray-300 mr-3">Back</a>
+      <Link className="" href="/blog">
+          <a href="/blog" className="drop-shadow-lg px-5 py-2 rounded-md text-lg bg-black font-bold text-gray-300 mr-3 no-underline">Return to blog</a>
       </Link>
     </div>
   </div>
+  <Footer/>
+  </>
   )
 }
 

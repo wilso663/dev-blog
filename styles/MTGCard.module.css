@@ -1,0 +1,96 @@
+.mtg-card {
+  line-height: 1;
+  border: 1px solid black;
+  width: 500px;
+  height: 700px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  box-shadow: -8px 9px 16px -3px gray;
+  background: #171314;
+  font-family: serif;
+}
+
+.card--background {
+  height: 600px;
+  margin: 1.25rem 1.25rem 0 1.25rem;
+  border-top-left-radius: .375rem;
+  border-top-right-radius: .375rem;
+  border-bottom-left-radius: 8%;
+  border-bottom-right-radius: 8%;
+  background-color: #BBB;
+  z-index: 0;
+}
+
+.card--frame {
+  z-index: 1;
+  position: relative;
+  height: 108%;
+  max-width: 97%;
+  top: 0.5%;
+  left: 1.2%;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame--header,
+.frame--rarity {
+  border-bottom: 4px solid #1a5b7b;
+  border-left: 2px solid #1a5b7b;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+}
+
+.frame--header,
+.frame--rarity,
+.frame--art {
+  box-shadow: 0 0 0 2px #171314,
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+  margin-bottom: 7px;
+}
+
+.frame--text {
+  box-shadow:
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+}
+
+.frame--header,
+.frame--rarity,
+.frame--text{
+  overflow: hidden;
+}
+
+.frame--header,
+.frame--rarity {
+  background: linear-gradient(0deg, rgba(201,216,201,.3), rgba(201,216,209,0.3)),
+  url(../public/images/tile-bg2.png);
+  display: flex;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding: 0.5rem 0;
+  
+  justify-content: space-between;
+  border-radius: 18px/40px;
+}
+
+.card--name,
+.frame--rarity {
+  font-size: 1.2rem;
+  color: #FFF;
+  font-weight: 600;
+}
+
+.card--name,
+.frame--rarity-type {
+  margin-left: 10px;
+}
+
+.mana-icon {
+  box-sizing: border-box;
+  box-shadow: -0.05em 0.12em 0px 0 black;
+  margin-right: 5px;
+  height: 20px;
+  align-self: center;
+}

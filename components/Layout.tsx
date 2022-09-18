@@ -1,4 +1,4 @@
-import Navbar from './Navbar'
+import Navbar from './HomeNav'
 import Head from 'next/head'
 
 type NavbarProps = {

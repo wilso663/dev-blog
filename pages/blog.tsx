@@ -7,7 +7,7 @@ import matter from 'gray-matter'
 import { IPost } from '../types/post'
 import { getAllPosts } from '../utils/mdxUtils'
 import Thumbnail from '../components/Thumbnail'
-import Navbar from '../components/Navbar'
+import Navbar from '../components/HomeNav'
 import BlogNav from '../components/BlogNav'
 import Footer from '../components/Footer'
 
