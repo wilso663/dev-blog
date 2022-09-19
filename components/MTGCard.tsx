@@ -16,7 +16,7 @@ const MTGCard = () => {
         <div className={styles["card--frame"]}>
           <div className={styles["frame--header"]}>
             <p className={styles["card--name"]}>Stephen Wilson</p>
-            <div>
+            <div className={styles['mana-icon-container']}>
             <i className={styles['mana-icon'] + " ms ms-cost ms-1"}></i>
             <i className={styles['mana-icon'] + " ms ms-cost ms-u"}></i>
             </div>
