@@ -74,6 +74,9 @@
   justify-content: space-between;
   border-radius: 18px/40px;
 }
+.frame--header {
+  padding: .5rem 0 .25rem 0;
+}
 
 .card--name,
 .frame--rarity {

@@ -1,0 +1,51 @@
+{ "data": [
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  },
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  },
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  },
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  },
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  },
+  {
+    "src": "/images/post-thumbnail.jpg",
+    "title": "Quizzical",
+    "tags": ["React","TypeScript","Unit Testing"],
+    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
+    "demoURL": "https://wilso663.github.io/trivia-app/",
+    "githubURL": "https://github.com/wilso663/trivia-app"
+  }
+]
+}

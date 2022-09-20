@@ -6,7 +6,7 @@ const HomeNav: React.FC = () => {
 
   return (
     <>
-    <div className="flex items-center justify-between pt-8 pb-4">
+    <div className="flex items-center justify-between pt-8 pb-4 mb-4">
       <a href="/">
         <p className="text-lg font-bold uppercase">Stephen Wilson</p>
       </a>

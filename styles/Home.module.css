@@ -11,7 +11,42 @@
   justify-content: center;
   align-items: center;
 }
-
+.about-section {
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (min-width: 880px) {
+  .about-section {
+    display: grid;
+    width: 100%;
+    grid-template-areas: 
+      "greeting card"
+      "description card"
+      "description card"
+      "description card"
+      "description card";
+    grid-template-columns: 1fr 275px;
+    grid-template-rows: 90px repeat(4,1fr);
+    grid-gap: 1.8rem;
+    align-items: end;
+  }
+}
+.greeting {
+  grid-area: greeting;
+}
+.mtg-card {
+  grid-area: card;
+  align-self: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.about-description {
+  grid-area: description;
+}
+.about-description p {
+  font-size: .94rem;
+  margin-bottom: 1rem;
+}
 .footer {
   display: flex;
   flex: 1;
@@ -65,13 +100,6 @@
     Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
-.grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
-}
 
 .card {
   margin: 1rem;

@@ -1,0 +1,28 @@
+.project--tag {
+  font-size: 0.7125rem;
+  padding: 0.3rem 0.6rem;
+}
+
+@media screen and (min-width: 650px) {
+  .project--tag{
+    font-size: 0.725rem;
+  }
+}
+@media screen and (min-width: 768px) {
+  .project--tag{
+    font-size: 0.56rem;
+    padding: 0.3rem .2rem;
+  }
+}
+@media screen and (min-width: 900px) {
+  .project--tag{
+    font-size: 0.6125rem;
+    padding: 0.2rem .4rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .project--tag{
+    font-size: 0.825rem;
+  }
+}
