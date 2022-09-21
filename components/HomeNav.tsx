@@ -1,8 +1,26 @@
 import Link from "next/link"
+import { MouseEventHandler } from "react";
 import {useState} from 'react'
 
-const HomeNav: React.FC = () => {
+interface HomeNavProps {
+  AboutSectionElement?: HTMLElement | null;
+  ProjectSectionElement?: HTMLElement | null;
+  ContactSectionElement?: HTMLElement | null;
+}
+
+const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionElement, ContactSectionElement}: HomeNavProps) => {
   const [isNavOpen, setIsNavOpen] = useState(false); // initiate isNavOpen state with false
+
+  function scrollTo(element: HTMLElement | undefined | null, offsetY?: number): void {
+    if(element !== undefined && element !== null){
+      const y = offsetY? element.offsetTop + offsetY : element.offsetTop
+      console.log(y)
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      })
+    }
+  }
 
   return (
     <>
@@ -23,20 +41,20 @@ const HomeNav: React.FC = () => {
         </section>
 
         <ul className="DESKTOP-MENU hidden space-x-8 lg:flex text-xl">
-          <li className="font-bold">
-              <p>About</p>
+          <li className="font-bold cursor-pointer">
+            <p  onClick={() => {scrollTo(AboutSectionElement)}}>About</p>
           </li>
-          <li className="font-bold">
-            <p>Projects</p>
+          <li className="font-bold cursor-pointer">
+            <p  onClick={() => {scrollTo(ProjectSectionElement)}}>Projects</p>
           </li>
-          <li className="font-bold">
+          <li className="font-bold cursor-pointer">
             <Link href="/blog">
               <a className="" href="/blog">Blog          
               </a>
             </Link>
           </li>
-          <li className="font-bold">
-            <p>Contact</p>
+          <li className="font-bold cursor-pointer">
+            <p  onClick={() => {scrollTo(ContactSectionElement)}}>Contact</p>
           </li>
         </ul>
       </nav>
@@ -56,20 +74,20 @@ const HomeNav: React.FC = () => {
     </div>
     <div className={`${isNavOpen ? "showMenuNav" : "hideMenuNav"} border-b-4 border-b-black mb-8`}>
       <ul className="MENU-LINK-MOBILE-OPEN flex flex-col items-start justify-between min-h-[125px]">
-        <li className="font-bold uppercase">
-          <p>About</p>
+        <li className="uppercase font-bold mb-3 cursor-pointer">
+          <p  onClick={() => {scrollTo(AboutSectionElement)}}>About</p>
         </li>
-        <li className="font-bold uppercase">
-          <p>Projects</p>
+        <li className="uppercase font-bold mb-3 cursor-pointer">
+          <p  onClick={() => {scrollTo(ProjectSectionElement)}}>Projects</p>
         </li>
-        <li className="uppercase font-bold">
+        <li className="uppercase font-bold mb-3 cursor-pointer">
           <Link href="/blog">
             <a className="" href="/blog">Blog          
             </a>
           </Link>
         </li>
-        <li className="uppercase font-bold mb-3">
-          <p>Contact</p>
+        <li className="uppercase font-bold mb-3 cursor-pointer">
+          <p  onClick={() => {scrollTo(ContactSectionElement)}}>Contact</p>
         </li>
       </ul>
     </div>
