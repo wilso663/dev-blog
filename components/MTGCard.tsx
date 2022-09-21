@@ -2,16 +2,11 @@ import Head from 'next/head'
 import styles from '../styles/MTGCard.module.css'
 
 // While this component could be refactored to dynamically populate data to be more reusable
-// I don't have many plans to reuse it beyond the initial showcase for the blog/portfolio.
+// I don't have many plans to reuse it beyond the initial showcase for the blog/portfolio, but if that changes I will come back and make this dynamic.
 const MTGCard = () => {
   return (
     <div className={styles['mtg-card']}>
-      {/* 
-        This css stylesheet by Andrew Gioia has some premade Magic the Gathering mana cost icons that are pixel perfect, so I've included it here for use in the frame header.
-      */}
-      <Head>
-      <link href="//cdn.jsdelivr.net/npm/mana-font@latest/css/mana.css" rel="stylesheet" type="text/css" />
-      </Head>
+
       <div className={styles["card--background"]}>
         <div className={styles["card--frame"]}>
           <div className={styles["frame--header"]}>
