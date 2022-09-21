@@ -55,7 +55,6 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   return (
     <>    
     <div className="blog--container ml-4 mr-4 md:ml-28 md:mr-28">
-      {/* <Navbar isBlogPage={true} /> */}
       <BlogNav/>
       <div className="articles__container">
       <h1 className="text-3xl font-bold mb-4">Featured Articles</h1>

@@ -1,8 +1,8 @@
-import Head from 'next/head'
 import styles from '../styles/MTGCard.module.css'
 
-// While this component could be refactored to dynamically populate data to be more reusable
-// I don't have many plans to reuse it beyond the initial showcase for the blog/portfolio, but if that changes I will come back and make this dynamic.
+// While this component could be pretty easily refactored to dynamically populate data
+// to be more reusable, I don't have many plans to reuse it beyond the initial showcase 
+// for the blog/portfolio, but if that changes I will come back and make this dynamic.
 const MTGCard = () => {
   return (
     <div className={styles['mtg-card']}>
