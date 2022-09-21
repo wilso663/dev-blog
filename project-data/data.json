@@ -1,4 +1,4 @@
-{ "data": [
+ {"data": [
   {
     "src": "/images/post-thumbnail.jpg",
     "title": "Quizzical",
@@ -48,4 +48,4 @@
     "githubURL": "https://github.com/wilso663/trivia-app"
   }
 ]
-}
+ }

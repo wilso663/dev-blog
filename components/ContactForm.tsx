@@ -12,7 +12,6 @@ type Props = {
   submitContact: (event: React.FormEvent, formData: FormPost) => void
 }
 
-
 async function saveFormData(data: object) {
   return await fetch("/api/form", {
       body: JSON.stringify(data),
