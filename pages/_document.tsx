@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from "next/document"
 
 const Document = () => {
   return (
-    <Html>
+    <Html className="scroll-smooth">
       <Head>
       <link href="https://fonts.googleapis.com/css2?family=Inter" rel="stylesheet"></link>
       {/* 

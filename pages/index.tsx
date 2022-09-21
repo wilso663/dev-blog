@@ -41,9 +41,6 @@ const Home: React.FC<Props> = (props: Props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeNav
-        AboutSectionElement={document.getElementById('about-section')}
-        ProjectSectionElement={document.getElementById('projects-section')}
-        ContactSectionElement={document.getElementById('contact-section')}
       />
       <section className={styles["about-section"] + ' max-w-5xl mb-8'} id='about-section'>
         <h1 className={styles['greeting'] + ' font-bold text-xl md:text-3xl'}> Hi, I'm Stephen, a fullstack web developer in South Carolina.</h1>
@@ -91,7 +88,7 @@ const Home: React.FC<Props> = (props: Props) => {
       </section>
       <section className="mb-16" id="projects-section">
         <h2 className="font-bold text-xl mb-6">Recent Projects</h2>
-        <div className="project--grid grid grid-cols-1justify-items-center  sm:grid-cols-2 md:grid-cols-3 gap-5" style={{maxWidth: '68rem'}}>
+        <div className="project--grid grid grid-cols-1 justify-items-center  sm:grid-cols-2 md:grid-cols-3 gap-5" style={{maxWidth: '68rem'}}>
 
           {props.data.map((project:any, index:any) => {
             return (

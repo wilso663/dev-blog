@@ -1,7 +1,6 @@
 import path from 'path';
 import { promises as fs } from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import matter from 'gray-matter';
 
 export default async function handler(req:NextApiRequest, res: NextApiResponse) {
   //Find the absolute path of the json directory

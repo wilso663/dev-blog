@@ -2,25 +2,9 @@ import Link from "next/link"
 import { MouseEventHandler } from "react";
 import {useState} from 'react'
 
-interface HomeNavProps {
-  AboutSectionElement?: HTMLElement | null;
-  ProjectSectionElement?: HTMLElement | null;
-  ContactSectionElement?: HTMLElement | null;
-}
 
-const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionElement, ContactSectionElement}: HomeNavProps) => {
+const HomeNav: React.FC = () => {
   const [isNavOpen, setIsNavOpen] = useState(false); // initiate isNavOpen state with false
-
-  function scrollTo(element: HTMLElement | undefined | null, offsetY?: number): void {
-    if(element !== undefined && element !== null){
-      const y = offsetY? element.offsetTop + offsetY : element.offsetTop
-      console.log(y)
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      })
-    }
-  }
 
   return (
     <>
@@ -40,12 +24,16 @@ const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionEle
           </div>
         </section>
 
-        <ul className="DESKTOP-MENU hidden space-x-8 lg:flex text-xl">
+        <ul className="DESKTOP-MENU hidden space-x-8 lg:flex text-xl scroll-smooth">
           <li className="font-bold cursor-pointer">
-            <p  onClick={() => {scrollTo(AboutSectionElement)}}>About</p>
+            <Link href="#about-section">
+              <a>About</a>
+            </Link>
           </li>
           <li className="font-bold cursor-pointer">
-            <p  onClick={() => {scrollTo(ProjectSectionElement)}}>Projects</p>
+            <Link href="#projects-section">
+              <a>Projects</a>
+            </Link>
           </li>
           <li className="font-bold cursor-pointer">
             <Link href="/blog">
@@ -54,7 +42,9 @@ const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionEle
             </Link>
           </li>
           <li className="font-bold cursor-pointer">
-            <p  onClick={() => {scrollTo(ContactSectionElement)}}>Contact</p>
+            <Link href="#contact-section">
+              <a>Contact</a>
+            </Link>
           </li>
         </ul>
       </nav>
@@ -75,10 +65,14 @@ const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionEle
     <div className={`${isNavOpen ? "showMenuNav" : "hideMenuNav"} border-b-4 border-b-black mb-8`}>
       <ul className="MENU-LINK-MOBILE-OPEN flex flex-col items-start justify-between min-h-[125px]">
         <li className="uppercase font-bold mb-3 cursor-pointer">
-          <p  onClick={() => {scrollTo(AboutSectionElement)}}>About</p>
+            <Link href="#about-section">
+              <a>About</a>
+            </Link>
         </li>
         <li className="uppercase font-bold mb-3 cursor-pointer">
-          <p  onClick={() => {scrollTo(ProjectSectionElement)}}>Projects</p>
+          <Link href="#projects-section">
+            <a>Projects</a>
+          </Link>
         </li>
         <li className="uppercase font-bold mb-3 cursor-pointer">
           <Link href="/blog">
@@ -87,7 +81,9 @@ const HomeNav: React.FC<HomeNavProps> = ({AboutSectionElement, ProjectSectionEle
           </Link>
         </li>
         <li className="uppercase font-bold mb-3 cursor-pointer">
-          <p  onClick={() => {scrollTo(ContactSectionElement)}}>Contact</p>
+          <Link href="#contact-section">
+            <a>Contact</a>
+          </Link>
         </li>
       </ul>
     </div>
