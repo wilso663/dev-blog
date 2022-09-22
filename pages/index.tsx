@@ -32,7 +32,6 @@ export type Props = {
 }
 
 const Home: React.FC<Props> = (props: Props) => {
-  
   return (
     <div className="ml-4 mr-4 md:ml-28 md:mr-28">
       <Head>
