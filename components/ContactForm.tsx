@@ -1,8 +1,10 @@
 import { ToastContainer, toast } from "react-toastify"
+import { useGoogleReCaptcha, GoogleReCaptcha } from "react-google-recaptcha-v3"
 import 'react-toastify/dist/ReactToastify.css'
-import { useState } from "react"
-import {useForm} from 'react-hook-form'
+import { useEffect, useRef, createRef } from "react"
+import {useForm, useFormState} from 'react-hook-form'
 import LoadingSpinner from './LoadingSpinner'
+
 
 interface FormPost {
   name: string
@@ -25,26 +27,51 @@ async function saveFormData(data: object) {
 
 const ContactForm: React.FC = () => {
 
-  const {register, handleSubmit, setError, formState: {isSubmitting, errors}} = useForm();
+  const {register, handleSubmit, setError, reset, formState, formState: {isSubmitting, isSubmitSuccessful, errors}} = useForm();
   
-  const onSubmit = async (data: object) => {
-    const response = await saveFormData(data)
-    if(response.status === 400) {
-      //Expect response to be a JSON response with structure
-      //{"fieldName": "error message for that field"}
-      const fieldToErrorMessage: {[fieldName: string]: string} = await response.json()
-      for(const [fieldName, errorMessage] of Object.entries(fieldToErrorMessage)){
-        setError(fieldName, {type: 'custom', message: errorMessage})
-      }
-    } else if ( response.ok) {
-      toast.success("Successfully saved")
-    } else {
-      toast.error("An unexpected error occurred while saving, please try again")
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  useEffect(() => {
+    if(formState.isSubmitSuccessful){
+      reset({name: '', email: '', message: ''})
     }
+  },[formState,reset])
+
+  const onSubmit = async (data: object) => {
+
+    if(!executeRecaptcha){
+      return;
+    }
+
+    try{
+      const token = await executeRecaptcha()
+      const dataWithToken = {
+        token,
+        ...data
+      }
+      const response = await saveFormData(dataWithToken)
+      if(response.status === 400) {
+        //Expect response to be a JSON response with structure
+        //{"fieldName": "error message for that field"}
+        const fieldToErrorMessage: {[fieldName: string]: string} = await response.json()
+        for(const [fieldName, errorMessage] of Object.entries(fieldToErrorMessage)){
+          setError(fieldName, {type: 'custom', message: errorMessage})
+        }
+      } else if ( response.ok) {
+        toast.success("Successfully sent")
+      } else {
+        toast.error("An unexpected error occurred while saving, please try again.")
+      }
+    } catch(error){
+      toast.error("An unexpected error occurred while saving, please try again.")
+      
+    }
+
   }
-  
+
   return (
     <form className="" onSubmit={handleSubmit(onSubmit)} style={{maxWidth: '68rem'}}>
+      <GoogleReCaptcha onVerify={t => console.log({ t })}/>
       <div className="flex w-full mb-4 flex-col md:flex-row" >
         <label htmlFor="name">
         </label>
@@ -54,7 +81,7 @@ const ContactForm: React.FC = () => {
                required={true} 
                {...register("name", {required: true})} 
                style={{backgroundColor: "#f9f9f9"}}/>
-        <div className="error">{errors["name"]?.message as string}</div>
+        <div className="error text-red-500">{errors["name"]?.message as string}</div>
         <label htmlFor="email">
         </label>
         <input className="rounded-md flex-1 mt-4 md:mt-0 md:ml-2 px-4 py-2" 
@@ -64,7 +91,7 @@ const ContactForm: React.FC = () => {
                autoComplete="email" 
                {...register("email", {required: true})} 
                style={{backgroundColor: "#f9f9f9"}} />
-        <div className="error">{errors["email"]?.message as string}</div>
+        <div className="error text-red-500">{errors["email"]?.message as string}</div>
       </div>
       <label htmlFor="message">        
       </label>
@@ -75,7 +102,8 @@ const ContactForm: React.FC = () => {
                 style={{backgroundColor: "#f9f9f9"}}
                 {...register('message', {required: true})}>
       </textarea>
-      <div className="error">{errors["message"]?.message as string}</div>
+      <div className="error text-red-500">{errors["message"]?.message as string}</div>
+
       <button className="bg-black px-6 py-2 text-white rounded-md  flex mt-5 items-center hover:text-green-500" 
               disabled={isSubmitting}>
         {!isSubmitting ? 
