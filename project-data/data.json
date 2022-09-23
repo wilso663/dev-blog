@@ -1,6 +1,6 @@
  {"data": [
   {
-    "src": "/images/post-thumbnail.jpg",
+    "src": "/images/project-photos/trivia.jpg",
     "title": "Quizzical",
     "tags": ["React","TypeScript","Unit Testing"],
     "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
@@ -8,44 +8,44 @@
     "githubURL": "https://github.com/wilso663/trivia-app"
   },
   {
-    "src": "/images/post-thumbnail.jpg",
-    "title": "Quizzical",
-    "tags": ["React","TypeScript","Unit Testing"],
-    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
-    "demoURL": "https://wilso663.github.io/trivia-app/",
-    "githubURL": "https://github.com/wilso663/trivia-app"
+    "src": "/images/project-photos/pic-some.jpg",
+    "title": "Pic-Some",
+    "tags": ["React","Router","Context API"],
+    "description": "Front end only photo shopping cart app. Users can favorite and add photos to the shopping cart and check out.",
+    "demoURL": "https://wilso663.github.io/pic-some/",
+    "githubURL": "https://github.com/wilso663/pic-some/"
   },
   {
-    "src": "/images/post-thumbnail.jpg",
-    "title": "Quizzical",
-    "tags": ["React","TypeScript","Unit Testing"],
-    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
-    "demoURL": "https://wilso663.github.io/trivia-app/",
-    "githubURL": "https://github.com/wilso663/trivia-app"
+    "src": "/images/project-photos/notes-app.jpg",
+    "title": "Markdown Notes",
+    "tags": ["React","react-mde","Showdown"],
+    "description": "Write, save, and preview notes in markdown. Made to start projects more complicated than a todo list.",
+    "demoURL": "https://wilso663.github.io/markdown-notes/",
+    "githubURL": "https://github.com/wilso663/markdown-notes/"
   },
   {
-    "src": "/images/post-thumbnail.jpg",
-    "title": "Quizzical",
-    "tags": ["React","TypeScript","Unit Testing"],
-    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
-    "demoURL": "https://wilso663.github.io/trivia-app/",
-    "githubURL": "https://github.com/wilso663/trivia-app"
+    "src": "/images/project-photos/colors.jpg",
+    "title": "Color Scheme Helper",
+    "tags": ["JavaScript","HTML","API Calls"],
+    "description": "A color scheme helper tool, get a 5 color palette in several scheme types. Uses the public 'thecolorapi'.",
+    "demoURL": "https://wilso663.github.io/color-scheme/",
+    "githubURL": "https://github.com/wilso663/color-scheme/"
   },
   {
-    "src": "/images/post-thumbnail.jpg",
-    "title": "Quizzical",
-    "tags": ["React","TypeScript","Unit Testing"],
-    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
-    "demoURL": "https://wilso663.github.io/trivia-app/",
-    "githubURL": "https://github.com/wilso663/trivia-app"
+    "src": "/images/project-photos/experiences-clone.png",
+    "title": "Airbnb Experiences Clone",
+    "tags": ["React","Mockup","Front-end"],
+    "description": "A front end only single page Airbnb experiences clone made to recreate a design by looking at a page.",
+    "demoURL": "https://wilso663.github.io/experiences-clone/",
+    "githubURL": "https://github.com/wilso663/experiences-clone/"
   },
   {
-    "src": "/images/post-thumbnail.jpg",
-    "title": "Quizzical",
-    "tags": ["React","TypeScript","Unit Testing"],
-    "description": "Quiz App made with React. Gets data from the OpenTDB API. Has functional testing with Mock Service Worker.",
-    "demoURL": "https://wilso663.github.io/trivia-app/",
-    "githubURL": "https://github.com/wilso663/trivia-app"
+    "src": "/images/project-photos/movie-watchlist.png",
+    "title": "Movie Watchlist",
+    "tags": ["JavaScript","HTML","API Calls"],
+    "description": "Search for movies by title and save them in a watchlist for later. Uses the Open Movie Database API.",
+    "demoURL": "https://glistening-tarsier-399b9a.netlify.app/",
+    "githubURL": "https://github.com/wilso663/movie-watchlist/"
   }
 ]
  }
