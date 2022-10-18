@@ -53,7 +53,6 @@ const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps)
       </Link>
     </div>
   </div>
-  <Footer/>
   </>
   )
 }
