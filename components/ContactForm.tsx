@@ -71,7 +71,7 @@ const ContactForm: React.FC = () => {
 
   return (
     <form className="" onSubmit={handleSubmit(onSubmit)} style={{maxWidth: '68rem'}}>
-      <GoogleReCaptcha onVerify={t => console.log({ t })}/>
+      <GoogleReCaptcha onVerify={t => {}}/>
       <div className="flex w-full mb-4 flex-col md:flex-row" >
         <label htmlFor="name">
         </label>

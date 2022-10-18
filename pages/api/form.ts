@@ -41,10 +41,9 @@ export default async function handler(
         html: message.replace(/\r\n/g, '<br>')
       
       }
-      res.status(200).json({ status: 'Ok' })
-      // mail.send(emailData).then(() => {
-      //   res.status(200).json({ status: 'Ok' })
-      // })
+      mail.send(emailData).then(() => {
+        res.status(200).json({ status: 'Ok' })
+      })
     } else {
       return res.status(400).json({
         status: 'Failed',
