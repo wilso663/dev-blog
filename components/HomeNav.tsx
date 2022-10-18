@@ -8,9 +8,11 @@ const HomeNav: React.FC = () => {
   return (
     <>
     <div className="flex items-center justify-between pt-8 pb-4 mb-4">
-      <a href="/">
-        <p className="text-lg font-bold uppercase">Stephen Wilson</p>
-      </a>
+      <Link href="/">
+        <a>
+          <p className="text-lg font-bold uppercase">Stephen Wilson</p>
+        </a>
+      </Link>
       <nav>
         <section className="MOBILE-MENU flex lg:hidden">
           <div
@@ -36,7 +38,7 @@ const HomeNav: React.FC = () => {
           </li>
           <li className="font-bold cursor-pointer">
             <Link href="/blog">
-              <a className="" href="/blog">Blog          
+              <a>Blog          
               </a>
             </Link>
           </li>
@@ -75,7 +77,7 @@ const HomeNav: React.FC = () => {
         </li>
         <li className="uppercase font-bold mb-3 cursor-pointer">
           <Link href="/blog">
-            <a className="" href="/blog">Blog          
+            <a>Blog          
             </a>
           </Link>
         </li>

@@ -50,7 +50,7 @@ const Home: React.FC<Props> = (props: Props) => {
           <p>I've worked as a Data Engineer and Production Supportwith the Atos-Syntel corporation at CUNA Mutual to create and maintain Big Data enterprise processes.</p>
           <div className="">
             <p>That blue trading card on this page? I used to love playing card games when I was younger, so I thought I'd try to remake one with Next.js and vanilla CSS. If you want read about how it was made or my other recent developments, the details are on my blog <Link href="/blog/mtg-card-css"><a className="text-blue-500 hover:underline">here.</a></Link></p>
-            <p>I'm a graduate of the University of South Carolina Upstate in Spartanburg, SC with a Bachelor's Degree in Computer Science. I have also completed the Scrimba career path bootcamp for frontend development, my certification is located <a className="text-blue-500 hover:underline" href="https://scrimba.com/certificate/uB3mmVCW/gfrontend" target="_blank">here</a>
+            <p>I'm a graduate of the University of South Carolina Upstate in Spartanburg, SC with a Bachelor's Degree in Computer Science. I have also completed the Scrimba career path bootcamp for frontend development, my certification is located <a className="text-blue-500 hover:underline" href="https://scrimba.com/certificate/uB3mmVCW/gfrontend" target="_blank" rel="noreferrer">here</a>
             </p>
 
             <p>My experience with Atos-Syntel has given me the opportunity to colloborate with large and small teams, multiple timezones, and directly with customers has allowed me to adapt and learn multiple technology stacks and roles.</p>
@@ -61,7 +61,7 @@ const Home: React.FC<Props> = (props: Props) => {
                             md:px-3 md:py-4 bg-black text-white 
                             rounded-md shadow-md hover:text-blue-500" 
                 href="https://www.linkedin.com/in/wilso663" 
-                target="_blank">View Linkedin
+                target="_blank" rel="noreferrer">View Linkedin
                 <svg className="ml-2 mt-0.5 fill-current" 
                 fill="#d1d5db" 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -74,7 +74,7 @@ const Home: React.FC<Props> = (props: Props) => {
               <a className="text-xs md:text-sm flex mr-5 px-2 py-2 md:px-3 md:py-3 
                             border-2 border-gray-300 rounded-md shadow-md 
                             hover:text-blue-600" 
-                 href="https://www.github.com/wilso663" target="_blank">View Github
+                 href="https://www.github.com/wilso663" target="_blank" rel="noreferrer">View Github
                 <svg className="ml-2 p-0.25 fill-current" 
                 fill="#d1d5db" 
                 xmlns="http://www.w3.org/2000/svg" 

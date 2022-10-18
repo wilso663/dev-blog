@@ -48,8 +48,8 @@ const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps)
 
       <MDXRemote {...source} components={components} /> 
       </article>
-      <Link className="" href="/blog">
-          <a href="/blog" className="drop-shadow-lg px-5 py-2 rounded-md text-lg bg-black font-bold text-gray-300 mr-3 no-underline">Return to blog</a>
+      <Link href="/blog">
+          <a className="drop-shadow-lg px-5 py-2 rounded-md text-lg bg-black font-bold text-gray-300 mr-3 no-underline">Return to blog</a>
       </Link>
     </div>
   </div>
