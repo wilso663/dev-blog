@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import {GetStaticProps} from 'next'
+import Link from 'next/link'
 import { IPost } from '../types/post'
 import { getAllPosts } from '../utils/mdxUtils'
 import Thumbnail from '../components/Thumbnail'
 import BlogNav from '../components/BlogNav'
 import Footer from '../components/Footer'
+import MTGCard from '../components/MTGCard';
 
 type PostProps = {
   posts: IPost[];
@@ -18,6 +20,7 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const articleTwo = posts[1]
   const articleThree = posts[2]
   const articleFour = posts[3]
+  const featuredArticles = posts.slice(1,4)
   const otherArticles = posts.slice(4)
   const grayTextClass = 'text-gray-400'
   const whiteTextClass = 'text-white'
@@ -72,51 +75,35 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
               <div className="article__attributes flex mb-2 align-middle justify-between">
                 <p className="text-sm text-gray-300">{mainArticle.date}</p>
               </div>
-              <p className="text-2xl lg:text-4xl font-bold mb-2">{mainArticle.title}</p>
-              <p className="md:text-sm lg:text-lg">{mainArticle.description}</p>
+              <Link href={`/blog/${mainArticle.slug}`} >
+                <a>
+                  <p className="text-2xl lg:text-4xl font-bold mb-2">{mainArticle.title}</p>
+                  <p className="md:text-sm lg:text-lg">{mainArticle.description}</p>
+                </a>
+              </Link>
+
             </div>
           </article>
-          <div className="articles__featured--other md:col-start-2 ">
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 pb-5'>
-              <div className="mr-4">
-                <Thumbnail
-                  slug={articleTwo.slug}
-                  title={articleTwo.title}
-                  src={articleTwo.thumbnail}
-                />
-              </div>
+          <div className="articles__featured--other md:col-start-2">
+            {featuredArticles.map((article, index) => (
+               <article key={article.slug} className={`border-b-gray-300 border-b-2 grid grid-cols-2 pb-5 ${index !== 0 ? ' mt-5' : ''}`}>
+                 <div className="mr-4">
+                  <Thumbnail
+                    slug={article.slug}
+                    title={article.title}
+                    src={article.thumbnail}
+                  />
+                </div>
               <div className="article__featured--other-info " >
-                <p className="text-sm text-gray-300">{articleTwo.date}</p>
-                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleTwo.title}</p>
-              </div>
-            </article>
-
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-5 pb-5'>
-              <div className=" mr-4">
-                <Thumbnail
-                  slug={articleThree.slug}
-                  title={articleThree.title}
-                  src={articleThree.thumbnail}
-                  />
-              </div>
-              <div className="article__featured--other-info ">
-                <p className="text-sm text-gray-300">{articleThree.date}</p>
-                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleThree.title}</p>
-              </div>
-            </article>
-            <article className='border-b-gray-300 border-b-2 grid grid-cols-2 mt-5 pb-5'>
-              <div className=" mr-4">
-                <Thumbnail
-                  slug={articleFour.slug}
-                  title={articleFour.title}
-                  src={articleFour.thumbnail}
-                  />
-              </div>
-              <div className="article__featured--other-info ">
-                <p className="text-sm text-gray-300">{articleFour.date}</p>
-                <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{articleFour.title}</p>
-              </div>
-            </article>
+                <p className="text-sm text-gray-300">{article.date}</p>
+                <Link href={`/blog/${article.slug}`}>
+                  <a>
+                    <p className="xs:text-sm sm:text-2xl md:text-lg lg:text-2xl font-bold">{article.title}</p>
+                  </a>
+                </Link>
+                 </div>
+               </article> 
+            ))}
           </div>
         </div>
         <h2 className="text-3xl font-bold mt-8 mb-8">Previous Articles</h2>
@@ -141,14 +128,14 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
           })}
 
         </div>
-        <div className="page--buttons flex align-center justify-center mb-5">
+        <div className="text-gray-200 page--buttons flex align-center justify-center mb-5">
             <button className={`rounded-l-lg p-2 bg-slate-800 ${pageNumber === 0 ? grayTextClass : whiteTextClass}`} onClick={handlePrevClick}>&lt;&lt; Prev</button>
             <span className="p-2 bg-slate-800 text-white">Page {pageNumber+1}</span>
             <button  className={`rounded-r-lg p-2 bg-slate-800 ${pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1 ? grayTextClass : whiteTextClass}`} onClick={handleNextClick}> Next &gt;&gt;</button>
         </div>
       </div>
     </div>
-    <Footer/>
+
     </>
 
   )

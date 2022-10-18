@@ -33,3 +33,213 @@ a {
     background: black;
   }
 } */
+
+/*
+Adding these duplicate card styles to global so I can access them in my mdx files
+*/
+.mtg-card {
+  line-height: 1;
+  border: 1px solid black;
+  width: 340px;
+  height: 510px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  box-shadow: -8px 9px 16px -3px gray;
+  background: #171314;
+  font-family: serif;
+}
+
+.card--background {
+  height: 440px;
+  margin: 1.25rem 1.25rem 0 1.25rem;
+  border-top-left-radius: .375rem;
+  border-top-right-radius: .375rem;
+  border-bottom-left-radius: 8%;
+  border-bottom-right-radius: 8%;
+  background-color: #BBB;
+  z-index: 0;
+  background-image: url(../public/images/frame-bg2.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.card--frame {
+  z-index: 1;
+  position: relative;
+  height: 106.5%;
+  max-width: 97%;
+  top: 0.5%;
+  left: 1.2%;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame--header,
+.frame--rarity {
+  border-bottom: 4px solid #1a5b7b;
+  border-left: 2px solid #1a5b7b;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+}
+
+
+.frame--header,
+.frame--rarity,
+.frame--art {
+  box-shadow: 0 0 0 2px #171314,
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+  margin-bottom: 7px;
+}
+
+.frame--header,
+.frame--rarity,
+.frame--text{
+  overflow: hidden;
+}
+
+.frame--header,
+.frame--rarity,
+.frame--text-stats {
+  background: linear-gradient(0deg, rgba(201,216,201,.3), rgba(201,216,209,0.3)),
+  url(../public/images/tile-bg2.png);
+  display: flex;
+  margin-top: 10px;
+  margin-left: 3px;
+  margin-right: -1px;
+  padding: 0.5rem 0;
+  
+  justify-content: space-between;
+  border-radius: 18px/40px;
+}
+.frame--header {
+  padding: .5rem 0 .5rem 0;
+  align-items: center;
+}
+
+.card--name,
+.frame--rarity {
+  font-size: 1.1rem;
+  color: #FFF;
+  font-weight: 600;
+}
+.frame--rarity {
+  font-size: 0.9rem;
+  height: 45px;
+}
+.card--name,
+.frame--rarity-type {
+  margin-left: 10px;
+}
+
+.mana-icon-container {
+  padding-top: .1rem;
+  padding-right: 0.25rem;
+}
+
+.frame--art{
+  height: 50%;
+  margin: 0 10px;
+}
+
+.frame--rarity-circle {
+  border-radius: 60%;
+  box-shadow:  inset 0.05em 0.05em 0.05em 0 #171314, -0.05em 0.09em 1px 0 #fff,
+  inset 0 .05em .15em .02em #171314;
+  border: 1px solid black;
+  height: 16px;
+  flex-basis: 16px;
+  align-self: center;
+  margin-left: 5px;
+}
+.frame--rarity-type {
+  align-self: center;
+}
+.mana-icon {
+  box-sizing: border-box;
+  box-shadow: -0.05em 0.12em 0px 0 black;
+  margin-right: 5px;
+  height: 20px;
+  align-self: center;
+}
+
+
+.rarity-icon {
+  width: auto;
+  height: 24px;
+  align-self: center;
+  margin-right: 10px;
+}
+
+.frame--text {
+  box-shadow:
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+  margin: 0 10px;
+  background: #bcd3e3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  overflow:visible;
+}
+
+.frame--text p {
+  margin-bottom: 5px;
+}
+.frame-text-margin {
+  margin: 5px 1px;
+}
+
+.frame--flavour-text {
+  font-style: italic;
+  padding: 10px 0;
+}
+.frame--text-stats {
+  border-bottom: 1px solid #fff;
+  border-left: 1px solid #1a5b7b;
+  border-top: 3px solid #171314;
+  border-right: 2px solid #171314;
+  box-shadow: 
+  1px 0 0 4px #0d80b6,
+  -3px 3px 3px 5px #171314;
+  margin-bottom: 7px;
+  font-size: 1.2rem;
+  position: absolute;
+  right: -12px;
+  bottom: -20px;
+  color: white;
+  padding: 0.06125rem .875rem;
+  margin-right: 5px;
+}
+
+
+.frame--misc-info {
+  color: #FFF;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 15px 0 15px;
+}
+
+.frame--misc-artist {
+  flex: 1;
+}
+.frame--misc-art p:first-of-type {
+  margin-bottom: 1px;
+}
+
+.frame--misc-copyright {
+  flex: 1;
+  text-align: right;
+  align-self: end;
+}
+
+.frame--misc-artist,
+.frame--misc-copyright {
+  font-size: 8px;
+  position: relative;
+  top: 10px;
+}

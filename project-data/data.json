@@ -9,7 +9,7 @@
   },
   {
     "src": "/images/project-photos/pic-some.jpg",
-    "title": "Pic-Some",
+    "title": "Pic Some",
     "tags": ["React","Router","Context API"],
     "description": "Front end only photo shopping cart app. Users can favorite and add photos to the shopping cart and check out.",
     "demoURL": "https://wilso663.github.io/pic-some/",

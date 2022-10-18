@@ -1,0 +1,51 @@
+---
+title: 'How this blog was created: the technology stack and more'
+layout: 'post'
+date: 'September 5, 2022'
+description: The techology combination turned out to be easier to use than I expected.
+thumbnail: /images/blog-thumbnails/creation.jpg
+thumbnailAttr: 'Ilya Pavlov at Unsplash.com'
+---
+When deciding on the tech stack for this new blog and portfolio, I read on some internet forums that being able to explain the thought process behind some of the projects on the portfolio may help Harvey May develop games get a better idea of your problem solving skills. So, I decided that it may be beneficial to also have a development blog in addition pretty traditional project showcase. With this in mind, two key features would be needed for this project, one, a contact form that would make a request to an email service, and two, the ability to get the article easily from a server for use in the blog all while utilizing a modern stack. 
+
+So, now we've got the requirements, let's go over the why of the other technologies for this project. Next.js is a framework of react but comes with one key advantage that is causing its rise in popularity. Server-side rendering the process in which JSX code is pre-rendered into an HTML page before being sent to the client browser this is mostly important for SEO purposes as a basic react application does its rendering client-side but with JSX, meaning any is semantic HTML that a web crawler for a search engine won't be seen as there is only the root in a react application until JSX renders it once the page has loaded. So, this kind of tech is becoming noticed by companies that that wants to direct traffic to their website or web application from a search engine. The support of [Vercel](https://vercel.com/), the creators of next.js is also a part of its recent rise in popularity. Deploying next.js applications to Vercel's servers is quite simple and has pretty simple integration for continuous deploy and interaction with third-party databases like Heroku. For Next.js, Vercel has become the choice for long term support of many developers' production servers. 
+
+For our CSS, i've grown pretty fond of Tailwind ticket project up and running quickly. Tailwind in my opinion it gives developers who don't have much design experience a design system with good practices for things like consistent font sizes, color schemes, shadows, etc. If you inspect the Tailwind to code you will see that there is a very consistent increase between each level of the utility class. For example on font sizes, the class text-base (a.k.a. medium), text-xl, text-2xl 
+```
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+```
+It's a simple increase of .25 times the base font size, usually 16px, but the consistency is the key.
+
+Colors are much more complex, so the values won't directly line up with a simple arithmetic value like the font sizes will, but look at the general pattern in the colors here. You'll notice the colors start off close to white, but similarly, more than linearly increase in hue and saturation between each level from 200 to 900.
+![image](/images/TailwindColors.png)
+
+This pattern is present for a good reason. The human eye finds these consistencies aesthetically pleasing even if we don't count you understand the exact font size differences, something will intuitively feel off. Tailwind gives a design system that follows these kinds of principles enabling anyone who hasn't done this kind of a design work before to create something that's similar and also learn from it. 
+
+Moving away from design, we still need a way to retrieve data from the server for our pages. Thankfully next.js natively handles this by having an easy to recreate template within its project structure. We can use a method called getStaticProps to send data, in this case JSON data from our backend server to our application easily as long as we have an API route for it. Using the getStaticProps method below, I'm pulling in a JSON data file that has contents for my projects portfolio from the server to the portfolio page of this site, which I can use to dynamically populate the project section.
+```
+const getStaticProps = async() => {
+    const PROJECT_PATH = path.join(process.cwd(), 'project-data')
+    const fileContents = fs.readFileSync(PROJECT_PATH + '/data.json')
+    const jsonData = JSON.parse(fileContents.toString())
+    return {
+      props: jsonData
+    }
+}
+```
+With this we're putting the absolute file path of a simple data file to our PROJECT_PATH variable, putting the contents into a buffer using the node fs package, and then parsing the contents of that buffer as a string. After getting the data, it's a simple matter to pass it up to our components as a props object.
+
+This isn't enough to use markdown files as individual blog posts, but this covers the idea of getting data from our server. I'll cover using markdown files as individual blog posts in a future post. For that, I'll use next-mdx-remote package that will allow jsx to be injected directly into the markdown, giving a lot of interactive capabilities for things like animations or page states. It's a great solution with ease of use for our data without the need for something like an external database. 
+
+#### In conclusion 
+That's the high level overview and beginning formula for creating my modern blog and portfolio page. Up next, we'll go into each individual tech more in depth with code examples for anyone following along or trying a similar project.

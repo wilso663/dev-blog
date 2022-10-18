@@ -1,0 +1,149 @@
+---
+title: 'Part 4 - How the blog was made: Client side form validation'
+layout: 'post'
+date: 'September 9, 2022'
+description: If I were to sum this portion with one sentence it would be, just use react-hook-form.
+thumbnail: /images/blog-thumbnails/contact.jpg
+thumbnailAttr: 'Markus Winkler at Unsplash.com'
+tags: ['react-hook-form']
+---
+
+
+It's an amazing library that does what a library should, creates a commonly used functionality in an easy to use interface. Forget Formik or manual form validation in react, react-hook-form does what I need it to do without being obtuse or requiring enormous of amounts of state management. I have personally found form validation to be one of the bigger annoyances of any react based application in the past, but this npm package makes it simple. I've also added react-toastify for toast notifications on form submission, which I will cover later. To start off with react-hook-form, we'll cover the useForm hook and all the destructured functions and state variables I've used in this application
+```
+const ContactForm: React.FC = () => {
+  const {register, handleSubmit, setError, reset, formState, formState: {isSubmitting, isSubmitSuccessful, errors}} = useForm();
+}
+```
+There's a lot to cover here, but most of these are fairly intuitive. handleSubmit is the function we call with onSubmit and pass our own submit function, setError is an array of field values, reset is a function to reset value we give it in to a default. The register value may be the only one that requires more explanation. I'll use the register value to manage form values that I'll give a label on the form input fields. For example
+```
+<input className="rounded-md flex-1 mt-4 md:mt-0 md:ml-2 px-4 py-2" 
+        placeholder="Enter your email address" 
+        type="email" 
+        required={true} 
+        autoComplete="email" 
+        {...register("email", {required: true})} 
+        style={{backgroundColor: "#f9f9f9"}} />
+```
+From this you can see what it does, it registers the added field value to whatever else is currently registered with the spread operator.
+If you were to look at the rest of the code you might be puzzled to find that there aren't many other elements that handle specific form validation. I haven't made a email regex function, I haven't done anything to write custom error messages for empty fields. The only thing I've put on the page is and error div which returns errors from the API submission, i.e., not client side, as well as a toast notification on successful or unsuccessful form submission, also not client side. The client side validation is already handled by react-hook-form. It displays messages on its own for empty fields and for incorrectly formatted email submissions with pop ups on the input fields without any additional code from me. To understand the full source code below, I'll split it into two parts, the onSubmit handler, and the html elements. Know that the onSubmit handler will have some code for ReCaptcha, which I will cover in a future blog post.
+
+
+#### ContactForm.tsx onSubmit
+```
+async function saveFormData(data: object) {
+  return await fetch("/api/form", {
+      body: JSON.stringify(data),
+      headers: {"Content-Type": "application/json"},
+      method: "POST"
+  })
+}
+const ContactForm: React.FC = () => {
+
+  const {register, handleSubmit, setError, reset, formState, formState: {isSubmitting, isSubmitSuccessful, errors}} = useForm();
+  
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  useEffect(() => {
+    if(formState.isSubmitSuccessful){
+      reset({name: '', email: '', message: ''})
+    }
+  },[formState,reset])
+
+  const onSubmit = async (data: object) => {
+
+    if(!executeRecaptcha){
+      return;
+    }
+
+    try{
+      const token = await executeRecaptcha()
+      const dataWithToken = {
+        token,
+        ...data
+      }
+      const response = await saveFormData(dataWithToken)
+      if(response.status === 400) {
+        //Expect response to be a JSON response with structure
+        //{"fieldName": "error message for that field"}
+        const fieldToErrorMessage: {[fieldName: string]: string} = await response.json()
+        for(const [fieldName, errorMessage] of Object.entries(fieldToErrorMessage)){
+          setError(fieldName, {type: 'custom', message: errorMessage})
+        }
+      } else if ( response.ok) {
+        toast.success("Successfully sent")
+      } else {
+        toast.error("An unexpected error occurred while saving, please try again.")
+      }
+    } catch(error){
+      toast.error("An unexpected error occurred while saving, please try again.")
+      
+    }
+
+  }
+}
+```
+For client side validation, there's not much to this with the onSubmit function. I'm simply displaying toast notifications from react-toastify depending on the response code from the server. This isn't really validating the inputs from the client, but you can see that there's no additional code needed for the onSubmit with react-hook-form.
+#### ContactForm.tsx html elements
+```
+  return (
+    <form className="" onSubmit={handleSubmit(onSubmit)} style={{maxWidth: '68rem'}}>
+      <GoogleReCaptcha onVerify={t => console.log({ t })}/>
+      <div className="flex w-full mb-4 flex-col md:flex-row" >
+        <label htmlFor="name">
+        </label>
+        <input className="rounded-md flex-1 md:mr-2 px-4 py-2" 
+               placeholder="Enter your name" 
+               type="text" 
+               required={true} 
+               {...register("name", {required: true})} 
+               style={{backgroundColor: "#f9f9f9"}}/>
+        <div className="error text-red-500">{errors["name"]?.message as string}</div>
+        <label htmlFor="email">
+        </label>
+        <input className="rounded-md flex-1 mt-4 md:mt-0 md:ml-2 px-4 py-2" 
+               placeholder="Enter your email address" 
+               type="email" 
+               required={true} 
+               autoComplete="email" 
+               {...register("email", {required: true})} 
+               style={{backgroundColor: "#f9f9f9"}} />
+        <div className="error text-red-500">{errors["email"]?.message as string}</div>
+      </div>
+      <label htmlFor="message">        
+      </label>
+      <textarea className="rounded-md block w-full px-4 py-2" 
+                placeholder="Enter your message" 
+                required={true}
+                rows={4} 
+                style={{backgroundColor: "#f9f9f9"}}
+                {...register('message', {required: true})}>
+      </textarea>
+      <div className="error text-red-500">{errors["message"]?.message as string}</div>
+
+      <button className="bg-black px-6 py-2 text-white rounded-md  flex mt-5 items-center hover:text-green-500" 
+              disabled={isSubmitting}>
+        {!isSubmitting ? 
+        <svg className="mr-3 fill-current" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="#FFF" 
+        width="18" 
+        height="18" 
+        viewBox="0 0 24 24">
+          <path d="M24 0l-6 22-8.129-7.239 7.802-8.234-10.458 7.227-7.215-1.754 24-12zm-15 16.668v7.332l3.258-4.431-3.258-2.901z"/>
+        </svg> : ''}
+        {isSubmitting ? <LoadingSpinner/> : "Send"}
+      </button>
+      <ToastContainer position="bottom-center" />
+    </form>
+  );
+```
+
+You can see that the validation in the html elements is handled by the errors state variable from useForm. The required tag inside the register function is all that's needed to display error messages for empty fields on submission. I haven't actually written any error message myself, react-hook-form is handling this already. I just need to call where to display it, like so
+```
+  <div className="error text-red-500">{errors["message"]?.message as string}</div>
+```
+
+And strangely enough, what used to be a pain point of react forms is now actually very simple and quick. I don't have to manage a bunch of extra state and make several potential error messages. I just have an error array within formState, and it gets validated on each update to the form without me having to code each individual edge case.
+
+Next up, I'll cover how to attach an email server to the contact form so we can let users send emails to us from our website using SendGrid.

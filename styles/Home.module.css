@@ -21,7 +21,7 @@
 .greeting {
   grid-area: greeting;
 }
-.mtg-card {
+.mtg-card-area {
   grid-area: card;
   align-self: center;
   margin-top: 1rem;

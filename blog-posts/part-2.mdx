@@ -1,0 +1,200 @@
+---
+title: 'Part 2 - How the blog was made: next-mdx-remote'
+layout: 'post'
+date: 'September 6, 2022'
+description: All blogs need some way to dynamically populate posts, and for this blog I chose mdx-remote with gray-matter.
+thumbnail: /images/blog-thumbnails/api.jpg
+thumbnailAttr: 'Douglas Lopes at Unsplash.com'
+---
+There are two main advantages to this choice. 
+#### The first advantage
+Having each post be in a simple markdown format makes it easy for me to create a new blog post page. When mdx-remote is set up like I have, all I need to do to create a new blog post is to create a markdown file in my blog-post directory. To get to the point where my server can read the markdown files, I use two npm packages called mdx-remote and gray-matter. The package gray-matter allows me to take a string or object with a content property, and extract and parse any front matter, in this case the content and blog data attributes like title, description, thumbnail image, and return it as an object with a data and content property. Here's the TypeScript code example where I retrieve a single post's contents using gray-matter. I've kept this code in a separate file called mdxUtils.ts
+## mdxUtils.ts
+```
+type Post = {
+  data: {
+    [key: string]: string;
+  }
+  content: string;
+}
+
+const POSTS_PATH = join(process.cwd(), 'blog-posts');
+
+export function getPost(slug: string): Post {
+  
+  const fullPath = join(POSTS_PATH, `${slug}.mdx`)
+  const fileContents = fs.readFileSync(fullPath, 'utf-8')
+  const { data, content } = matter(fileContents)
+  
+  return {data, content}
+
+}
+```
+This by itself isn't enough however, because although we're retrieving the data and content of a single post, we're not retrieving every post, much less doing anything with the data. To retrieve every post, we have a similar method, but iterating over each item
+```
+type Items = {
+  [key: string]: string
+}
+
+export function getPostItems(filePath: string, fields: string[] = []): Items {
+  const slug = filePath.replace(/\.mdx?$/,'')
+  const {data, content} = getPost(slug)
+
+  const items: Items = {}
+
+  fields.forEach((field) => {
+    if(field === 'slug') 
+      items[field] = slug
+
+    if(field === 'content')
+      items[field] = content
+
+    if(data[field])
+      items[field] = data[field]
+
+  })
+
+  return items
+}
+```
+The forEach method is called to firstly get the slug url and the text content as well as make sure we're only getting back the data attributes that we're expecting. When I call this 'fields' parameter from getStaticProps on the blog home page, it will look something like this 
+## blog.tsx
+```  
+export const getStaticProps: GetStaticProps = async () => {
+  const posts = getAllPosts([
+    'slug',
+    'date',
+    'thumbnail',
+    'thumbnailAttr',
+    'title',
+    'description',
+  ]);
+
+  return { props: { posts } };
+};
+```
+## mdxUtils.ts
+That last method mentioned above is a similar method to the getPostItems, but I use it to sort the posts by date so I can display the lastest article first. The first method gets all mdx file paths in a given directory and the second returns the posts from all of those file paths as objects with all found attributes as data fields.
+
+```
+function getPostFilePaths(): string[] {
+  return (
+    fs.readdirSync(POSTS_PATH).filter((path) => /\.mdx?$/.test(path))
+  )
+}
+
+export function getAllPosts(fields: string[] = []): Items[] {
+  const filePaths = getPostFilePaths()
+  const posts = filePaths
+                .map((filePath) => getPostItems(filePath, fields))
+                .sort((post1,post2) => (Date.parse(post1.date) > Date.parse(post2.date) ? -1 : 1))
+  return posts
+}
+```
+To actually render each post within their own unique url, I use a dynamic url within next.js's pages/blog folder with the [] notation. I called my file [slug].tsx for the attribute we're using. With this I can dynamically render a url for this component based on the props that I give it with the property of 'slug'. My basic slug page component and Props types looks like this
+## post.ts
+```
+export interface IPost {
+  slug: string;
+  date: string;
+  thumbnail: string;
+  thumbnailAttr: string;
+  title: string;
+  description: string;
+  yields: string;
+  tags: string[];
+}
+```
+## [slug].tsx
+```
+import { GetStaticProps, GetStaticPaths} from 'next'
+import Image from 'next/image'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
+
+import BlogNav from '../../components/BlogNav'
+import Footer from '../../components/Footer'
+import StrayButton from '../../components/StrayButton'
+import { IPost } from '../../types/post'
+import { getPost, getAllPosts } from '../../utils/mdxUtils'
+import Link from 'next/link'
+
+type PostPageProps = {
+  source: MDXRemoteSerializeResult;
+  frontMatter: Omit<IPost, 'slug'>;
+}
+
+//trying out injecting components into MDXRemote
+const components = { StrayButton }
+
+const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps) => {
+  return(
+    <>
+  <div className="">
+    <BlogNav/>
+    
+    <div className="">
+        <h1 className="">{frontMatter.title}</h1>  
+        <Image
+        src={frontMatter.thumbnail}
+        alt={`Cover image for ${frontMatter.title}`}
+        width={3200}
+        height={2000}
+        layout="responsive"
+        object-fit="cover"
+        />
+    </div>
+      <MDXRemote {...source} components={components} /> 
+  </div>
+
+  </>
+  )
+}
+```
+The MDXRemote component is what enables us to use JSX within our markdown file, so we pass all components we want to use within any file to each individual one this way. I need two additional methods to one, pass the post data to each slug page with GetStaticProps and also another to map each slug we find in our mdx directory to its own url using GetStaticPaths
+## [slug].tsx
+```
+export const getStaticProps: GetStaticProps = async({params}) => {
+  const {content, data} = getPost(params?.slug as string)
+  const mdxSource = await serialize(content, {scope: data})
+
+  return {
+    props: {
+      source: mdxSource,
+      frontMatter: data
+    }
+  }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = getAllPosts(['slug'])
+
+  const paths = posts.map((post) => ({
+    params: {
+      slug: post.slug,
+    },
+  }))
+
+  return {
+    paths, 
+    fallback: false,
+  }
+}
+```
+Having the paths object in getStaticPaths creates a new url with each mdx file name using getAllPosts, while getStaticProps will provide the data for each post, passed up to the dynamic component through props.
+
+
+So this is how the posts are retrieved and dynamically rendered to each URL.
+## The second advantage
+Quickly mentioned earlier in the code above in [slug].tsx is the ability to inject jsx components into our mdx files. The lines in the PostPage component are what I'm referring to.
+```
+const components = { StrayButton }
+
+<MDXRemote {...source} components={components} /> 
+```
+This StrayButton component can be referenced in a code block of an mdx file and called just how it would be in a JSX file. In this example I'm only passing a single component to every mdx file, but multiple components can be passed into this components object. The downside of this approach is that as the project gets larger, it will become a bit unwieldy passing in each component we may want to every single MDX file. However, for a small blog like this, I think it is a sufficient solution. 
+
+There may be a way to pass individual components to particular slugs, but that will require some additional research on my part on the MDXRemote component as it's not doable with the current implementation since it only has this one components parameter for everything that MDXRemote accesses.
+
+#### In closing
+This covers how the blog page is getting its data from the backend server. Using mdx-remote with next.js makes it easy to produce dynamic pages from mdx files, and using gray-matter to parse the data into an easy to use object we can pass to each page using GetStaticProps from Next.js. Next up I'll cover how I made a simple pagination feature for the main blog page.

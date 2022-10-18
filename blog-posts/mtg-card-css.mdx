@@ -1,35 +1,591 @@
 ---
 title: 'How I remade the Magic the Gathering card in CSS'
 layout: 'post'
-date: 'September 13, 2022'
-description: I used to love playing card games when I was younger, so I thought to try my skills by remaking the famous making the Gathering card design.
-thumbnail: /images/mtg-thumbnail.jpg
-thumbnailAttr: 'Guy Person'
-tags: ['Very funni', 'javascript']
+date: 'September 23, 2022'
+description: I used to love playing card games when I was younger, so I thought to try my skills by remaking the famous making the Gathering card design with CSS.
+thumbnail: /images/blog-thumbnails/mtg-thumbnail.jpg
+thumbnailAttr: 'Ryan Quintal at Unsplash.com'
+tags: ['MTG', 'CSS']
 ---
 
-<div>
-  This is a blog post about <strong>functions</strong>. <br/>
-  We'll learn what functions are, how to write functions, and how to use them
+Let's take a look at a reference card and see where to begin. I chose the Bearer of Overwhelming Truths card from the Shadows of Innistrad set due to its Human Wizard type, which some programmers are sometimes though to be. Apologies for the low resolution image.
+<div style={{height: '522px', width: '332px', margin: '0 auto'}}>
+<Image
+src="/images/bearer-of-truths.png"
+alt="Bearer of truths Magic the Gathering card from Shadows of Innistrard"
+height="522px"
+width="350px"
+layout="responsive"
+/>
 </div>
 
-<br/>
+When tackling a difficult looking component like this, it's important to break the problem down into manageable pieces. Let's first go with the layout, that is the multiple backgrounds, containers for titles, and subtitles. After that we can tackle the text and icons.
 
-### This is a Markdown sub-heading
-We just used `###` subheading in our blog post.
+Let's also start with the outermost border and work our way in when replicating this background. By doing that, we'll see 3 layers to this image
+1. The thick black border with some border radius.
+2. The blue background that looks like it's overlayed with a noise texture, a common pattern with art used in games.
+3. The foremost layer: this includes the card name, card image, card type, and the lightblue background for the card description underneath.
 
-  {`
-    const doStuff = () => {
-      return console.log('hey')
-    }
-  `}
+Keep in mind for a challenge component as complex as this, having multiple nested div containers although typically undesriable is unavoidable in this case. So, we'll start off the component with those three containers in mind. 
 
+The inner background image is a noise texture I found with google that I've switched the background color to match the Bearer of Truths card color using photoshop. You can save this image as a copy to use yourself.
+<div className="flex justify-center">
+  <img src="/images/frame-bg2.png"/>
+</div>
+```
+<div className="mtg-card">
+  <div className="card--background">
+    <div className="card--frame">
+    </div>
+  </div>
+</div>
+```
+<div className="flex justify-center">
+<div className="mtg-card not-prose">
+  <div className="card--background">
+    <div className="card--frame">
+    </div>
+  </div>
+</div>
+</div>
+
+On inspecting the specifics of the card,  you'll see that the height ratio is pretty close to 2:3 width to height, but it looks off if the width is much smaller than 340px, so I'll keep it to that fixed width for the sake of mobile screens. I also need to keep the line height to minimum, and add a fair border radius, I found 25px to be about correct. 
+
+For the font, Magic the Gathering has its own copyrighted font, but many serif fonts look similar enough to just use a default serif font. I'll also add an noticeable box shadow since there's a lot of whitespace around the card. To get the exact background color, I used the Chorme browser extension called Color by Fardos. It lets you use an eye dropper on any web page, which made getting the color from the official Magic the Gathering card database a breeze.
 
 ```
-  // this is a code block
-  const doSomething = () => {
-    return console.log('hey')
-  }
+.mtg-card {
+  line-height: 1;
+  border: 1px solid black;
+  width: 340px;
+  height: 510px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  box-shadow: -8px 9px 16px -3px gray;
+  background: #171314;
+  font-family: serif;
+}
+```
+For the inner background, we'll need to set the background image to that noise texture mentioned earlier, set with no-repeat, and to get the image behind the black border of the back most layer, I'll set the z-index below it and set the background-size to cover. The border radii are slightly different, with the top being close to 6px. To get the lower half's border radius right to an arc, I'll use percentage based radii. 8% turned out to give the correct look.  I also tend to favor rem instead of pixel sizes, so I'll convert pixel values to rem when I can. The last thing is the overall height of the inner background. I need it to fit between the height of the container which is 510px. 440px gave close to what I was looking for, which is to have a fair bit of uneven black towards the bottom of the card.
+
+```
+.card--background {
+  height: 440px;
+  margin: 1.25rem 1.25rem 0 1.25rem;
+  border-top-left-radius: .375rem;
+  border-top-right-radius: .375rem;
+  border-bottom-left-radius: 8%;
+  border-bottom-right-radius: 8%;
+  background-color: #BBB;
+  z-index: 0;
+  background-image: url(/images/frame-bg2.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+```
+Now for the rest of the card. I'm mostly going to focus on the structure layout. The copyright text on the card is going to overflow out of the container since it needs to be on the black background and the copyright text is pretty small, so I had to brute force a value for the height which turned out to be 106.5%. The height also needs to factor in the need for whitespace, so I'll be adding some with the width, top and, and left. Getting the inner frame off the left border is most important. That value was a little more than a percentage. I'm also going to use flex on many of these inner elements, so I'm setting the parent element to flex and setting the flow direction to the y axis.
+
+```
+.card--frame {
+  z-index: 1;
+  position: relative;
+  height: 106.5%;
+  max-width: 97%;
+  top: 0.5%;
+  left: 1.2%;
+  display: flex;
+  flex-direction: column;
+}
 ```
 
-<div>Here, I'm using a component inside my MarkDown file: {<StrayButton/>}</div>
+Due to the inner frame .card--frame having no height, there's nothing to see yet, but we will want to fit the rest of the inner elements into this frame container, so I'm going to use flex to grow the height of the description to occupy the leftover space once we make the name and type section as those will need a fixed height to stay readable.
+
+If we look back at the full card to get the rest of the inner layout, we see that I'll need
+<div className="flex justify-center not-prose" >
+  <div className="mr-2" style={{height: '510px', width: '332px'}}>
+    <Image
+    src="/images/bearer-of-truths.png"
+    alt="Bearer of truths Magic the Gathering card from Shadows of Innistrard"
+    height="510px"
+    width="332px"
+    layout="responsive"
+    />
+  </div>
+</div>
+1. A container for the name, 
+2. The card image 
+3. A container for the card creature type and rarity
+4. A container for the description 
+5. An element for the attack and life stats that overflows out of the frame 
+6. A container for misc info about the artist, card number, and copyright that is overflowing out of the container
+
+
+
+Adding those pieces to the layout will give us a structure like this
+```
+<div className="mtg-card">
+  <div className="card--background">
+    <div className="card--frame">
+      1. <div className="frame--header">
+        <p className="card--name ">Card name</p>
+      </div>
+      2. <img src="/images/yoursrc.png" alt="" className="frame--art" />
+      3. <div className="frame--rarity">
+      </div>
+      4. <div className="frame--text">
+          <p className="frame--text-description frame-text-margin"></p>
+          <p className="frame--flavour-text"></p>
+          5. <p className="frame--text-stats">3/2</p>
+      </div>
+      6. <div className="frame--misc-info">
+          <div className="frame--misc-artist">
+            <p>54/297 R</p>
+            <p>SOI &#x2022; EN Seb McKinnon</p>
+          </div>
+          <div className="frame--misc-center"></div>
+          <div className="frame--misc-copyright">
+            &trade; &amp; &#169; 2016 Wizards of the Coast
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Styling these will be fairly extensive, but since a few components are going to overflowing from the container, we should add the rest of the text and icons before styling so we know they don't change the layout behavior when added and undo our work.
+
+To the layout we just made, we'll add
+1. A creature type
+1a. A circle with an inset shadow just before the creature type text
+2. A rarity with the icon. I'll use an svg I found online
+3. A card description
+4. Flavour text for the card description
+5. A self portrait in the image
+6. Mana icons in the name container.
+
+For 6, the Bearer of Truths card is a double sided card that you switch to after fulfilling the requirements on the front side of the card. Most cards have a mana cost signified by mana icons by their name, so I'm going to add those. And while we could create these mana icons ourselves with CSS, I found a css library called mana-font by Andrew Gioia and it's got pixel perfect mana icons as svgs already, so we'll use that. The link for the css is here
+```
+<link href="//cdn.jsdelivr.net/npm/mana-font@latest/css/mana.css" rel="stylesheet" type="text/css" />
+```
+I'm going to make a card for myself using my portrait. Feel free to swap the data around to make whatever card you'd like. But, with that data added to our containers, the current component should look something like this
+```
+<div className='mtg-card'>
+  <div className="card--background">
+    <div className="card--frame">
+      <div className="frame--header">
+        <p className="card--name ">Stephen Wilson</p>
+        6. <div className='mana-icon-container'>
+          <i className="mana-icon ms ms-cost ms-1"></i>
+          <i className="mana-icon ms ms-cost ms-u"></i>
+        </div>
+      </div>
+      5. <img src="/images/self-portrait2.png" alt="" className="frame--art" />
+      <div className="frame--rarity">
+        1. <div className="flex">
+          1a. <div className="frame--rarity-circle"></div>
+          <p className="frame--rarity-type">Creature - Human Wizard</p>
+        </div>
+        2. <img src="/images/r.svg" alt="SOI-icon" className="rarity-icon"/>
+        
+        </div>
+        <div className="frame--text">
+          3. <p className="frame--text-description frame-text-margin">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+          4. <p className="frame--flavour-text">What do you mean you deployed on a friday!?</p>
+          <p className="frame--text-stats">3/2</p>
+        </div>
+        <div className="frame--misc-info">
+          <div className="frame--misc-artist">
+            <p>54/297 R</p>
+            <p>SOI &#x2022; EN Seb McKinnon</p>
+          </div>
+          <div className="frame--misc-center"></div>
+          <div className="frame--misc-copyright">
+            &trade; &amp; &#169; 2016 Wizards of the Coast
+          </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+```
+With all of the data added to the component, we can switch our focus over to the rest of the styling. We only styled the 3 outermost containers, so we'll want to start from frame--header for the name and icons and work our way down.
+Taking another look at reference image and at the name container. There is a lot dissect.
+<div className="flex justify-center not-prose flex-col md:flex-row" >
+  <div className="mr-2" style={{height: '510px', width: '332px'}}>
+    <Image
+    src="/images/bearer-of-truths.png"
+    alt="Bearer of truths Magic the Gathering card from Shadows of Innistrard"
+    height="510px"
+    width="332px"
+    layout="responsive"
+    />
+  </div>
+</div>
+
+We need 
+1. A white border on the top and right
+2. A dark blue border on the left and bottom
+3. Hide the overflow since this container is going to be fairly packed.
+4. A large box shadow around the container. 
+5. There's also almost marble looking background image in the name. I'll need to do something similar to the inner background, where I change the color manually on a background image in photoshop. I manipulated this photo in photoshop to give this background color, you can download it here if you'd like. 
+<div className="flex justify-center">
+  <img src="/images/tile-bg2.png"/>
+</div>
+6. A fairly large border radius
+7. Some different margins on each side. We'll want to experiment with those until we get it looking right.
+8. Some padding on the top and bottom. 
+9. It looks like the creature type container is very similar to the name container, so we'll add these styles to both classes to start with.
+10. To give the image a height and some margin to it's not taking up the whole page
+So compiling all of those requirements, we get some css code that looks like this. 
+```
+.frame--header,
+.frame--rarity {
+  border-bottom: 4px solid #1a5b7b;
+  border-left: 2px solid #1a5b7b;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px #171314,
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+  margin-bottom: 7px;
+  background: linear-gradient(0deg, rgba(201,216,201,.3), rgba(201,216,209,0.3)),
+  url(/images/tile-bg2.png);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-left: 3px;
+  margin-right: -1px;
+  padding: .5rem 0;
+  border-radius: 18px/40px;
+}
+.frame--header {
+  padding: .5rem 0 .5rem 0;
+  align-items: center;
+}
+.frame--art{
+  height: 50%;
+  margin: 0 10px;
+}
+.mana-icon-container {
+  padding-top: .1rem;
+  padding-right: 0.25rem;
+}
+```
+And with that the current result looks like this
+<div className="flex justify-center">
+<div className='mtg-card not-prose'>
+  <div className="card--background">
+    <div className="card--frame">
+      <div className="frame--header">
+        <p className="card--name">Stephen Wilson</p>
+        <div className=''>
+        <i className="mana-icon ms ms-cost ms-1"></i>
+        <i className="mana-icon ms ms-cost ms-u"></i>
+        </div>
+      </div>
+      <img src="/images/self-portrait2.png" alt="" className="frame--art" />
+      <div className="frame--rarity">
+        <div className="flex">
+          <div className=""></div>
+          <p className="">Creature - Human Wizard</p>
+        </div>
+        <img src="/images/r.svg" alt="SOI-icon" className=""/>
+        
+      </div>
+      <div className="">
+        <p className="">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+        <p className="">What do you mean you deployed on a friday!?</p>
+        <p className="">3/2</p>
+      </div>
+      <div className="">
+        <div className="">
+          <p>54/297 R</p>
+          <p>SOI &#x2022; EN Seb McKinnon</p>
+        </div>
+        <div className=""></div>
+        <div className="">
+          &trade; &amp; &#169; 2016 Wizards of the Coast
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+It's a little rough, but we're making good progress. Let's fix the mana icon container and the creature type container's styles. The mana icons and creature type aren't vertically centered. Since we've made the main container flex, the main description and miscellaneous info containers still need a background and border to fill the rest of the spac to adjust the space the name and type container occupy. We also need to add the circle with the inset shadow before the creature type container.
+
+#### HTML updates
+I've added some utility classes from tailwind to this since the container already had a flex utility class on it.
+```
+<div className="frame--rarity">
+  <div className="flex align-center ml-1 type-container w-100" >
+    <div className="frame--rarity-circle"></div>
+    <p className="frame--rarity-type">Creature - Human Wizard</p>
+  </div>
+  <img src="/images/r.svg" alt="SOI-icon" className="rarity-icon"/>        
+</div>
+<div className="frame--text">
+    <p className="frame--text-description">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+    <p className="">What do you mean you deployed on a friday!?</p>
+    <p className="frame-text-stats">3/2</p>
+</div>
+<div className="frame--misc-info">
+  <div className="">
+    <p>54/297 R</p>
+    <p>SOI &#x2022; EN Seb McKinnon</p>
+  </div>
+</div>
+```
+
+#### Rarity circle and rarity container additions
+```
+.frame-rarity-circle {
+  border-radius: 60%;
+  box-shadow:  inset 0.05em 0.05em 0.05em 0 #171314, -0.05em 0.09em 1px 0 #fff,
+  inset 0 .05em .15em .02em #171314;
+  border: 1px solid black;
+  height: 16px;
+  flex-basis: 16px;
+  align-self: center;
+  margin-left: 5px;
+}
+.frame-rarity-type {
+  align-self: center;
+}
+.rarity-icon {
+  width: auto;
+  height: 24px;
+  align-self: center;
+  margin-right: 10px;
+}
+```
+#### Frame description additions
+The frame description is a little involved, but the biggest part is getting the layout and padding correct, which I will use flex and add 24px or about 1.5rem for. I'm also going to make overflow visible in this child element to allow the card attack and health stats to be in top layer in the bottom right corner of the card.
+```
+.frame-text {
+  box-shadow:
+  0 0 0 5px #0d80b6,
+  -3px 3px 2px 5px #171314;
+  margin: 0 10px;
+  background: #bcd3e3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  overflow:visible;
+}
+.frame-text-description {
+  margin-bottom: 5px;
+}
+.frame--misc-info {
+  color: #FFF;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 15px 0 15px;
+}
+```
+<div className="flex justify-center">
+<div className='mtg-card not-prose'>
+  <div className="card--background">
+    <div className="card--frame">
+      <div className="frame--header">
+        <p className="card--name ">Stephen Wilson</p>
+        <div className='mana-icon-container'>
+        <i className="mana-icon ms ms-cost ms-1"></i>
+        <i className="mana-icon ms ms-cost ms-u"></i>
+        </div>
+      </div>
+      <img src="/images/self-portrait2.png" alt="" className="frame--art" />
+      <div className="frame--rarity">
+        <div className="flex align-center ml-1 type-container w-100">
+          <div className="frame--rarity-circle"></div>
+          <p className="frame--rarity-type">Creature - Human Wizard</p>
+        </div>
+        <img src="/images/r.svg" alt="SOI-icon" className="rarity-icon"/>
+        
+      </div>
+      <div className="frame--text">
+        <p className="frame--text-description">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+        <p className="">What do you mean you deployed on a friday!?</p>
+        <p className="">3/2</p>
+      </div>
+      <div className="frame--misc-info">
+        <div className="">
+          <p>54/297 R</p>
+          <p>SOI &#x2022; EN Seb McKinnon</p>
+        </div>
+        <div className=""></div>
+        <div className="">
+          &trade; &amp; &#169; 2016 Wizards of the Coast
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+Just a few issues left, the padding on the card name, and types are too small,but this is due to the description taking up too much space. Keep in mind that its parent container is a flex item so child elements will take up as much space as they need unless instructed otherwise. We can fix that with a few more constraints on the rest of the text. The only two things left to do after will be add a large border with a box shadow around the attack and health stat and get it to overflow out of the container in the right corner, and secondly to fix the font size and alignment on the artist name and miscellaneous info in the bottom of the card.
+
+#### HTML additions
+```
+<div className="frame--text">
+  <p className="frame--text-description frame-text-margin">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+  <p className="frame--flavour-text">What do you mean you deployed on a friday!?</p>
+  <p className="frame--text-stats">3/2</p>
+</div>
+<div className="frame--misc-info">
+  <div className="frame--misc-artist">
+    <p>54/297 R</p>
+    <p>SOI &#x2022; EN Seb McKinnon</p>
+  </div>
+  <div className="frame--misc-center"></div>
+  <div className="frame--misc-copyright">
+    &trade; &amp; &#169; 2016 Wizards of the Coast
+  </div>
+</div>
+```
+#### Typography, Font size, and layout additions
+```
+.frame--flavour-text {
+  font-style: italic;
+  padding: 10px 0;
+}
+.frame--misc-info {
+  color: #FFF;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 15px 0 15px;
+}
+.frame--misc-artist {
+  flex: 1;
+}
+.frame--misc-art p:first-of-type {
+  margin-bottom: 1px;
+}
+
+.frame--misc-copyright {
+  flex: 1;
+  text-align: right;
+  align-self: end;
+}
+
+.frame--misc-artist,
+.frame--misc-copyright {
+  font-size: 8px;
+  position: relative;
+  top: 10px;
+}
+```
+<div className="flex justify-center">
+  <div className='mtg-card not-prose'>
+    <div className="card--background">
+      <div className="card--frame">
+        <div className="frame--header">
+          <p className="card--name ">Stephen Wilson</p>
+          <div className='mana-icon-container'>
+          <i className="mana-icon ms ms-cost ms-1"></i>
+          <i className="mana-icon ms ms-cost ms-u"></i>
+          </div>
+        </div>
+        <img src="/images/self-portrait2.png" alt="" className="frame--art" />
+        <div className="frame--rarity">
+          <div className="flex align-center ml-1 type-container" style={{width: '100%'}}>
+            <div className="frame--rarity-circle"></div>
+            <p className="frame--rarity-type">Creature - Human Wizard</p>
+          </div>
+          <img src="/images/r.svg" alt="SOI-icon" className="rarity-icon"/>
+          
+        </div>
+        <div className="frame--text">
+          <p className="frame--text-description frame-text-margin">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+          <p className="frame--flavour-text">What do you mean you deployed on a friday!?</p>
+          <p className="">3/2</p>
+        </div>
+        <div className="frame--misc-info">
+          <div className="frame--misc-artist">
+            <p>54/297 R</p>
+            <p>SOI &#x2022; EN Seb McKinnon</p>
+          </div>
+          <div className="frame--misc-center"></div>
+          <div className="frame--misc-copyright">
+            &trade; &amp; &#169; 2016 Wizards of the Coast
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+Getting the name and type padding correct is a little difficult since the container parent container is flex display. We can force the padding to be the what we want, but because the text-stats container parent is using height based percentages, it will push the text out of the container. We'll fix this with the last class by adding a fair bit of padding on the bottom and top to fill out the extra space, which will push the text--description class up and give the name and rarity containers more space. We'll need to use absolute positioning as well to get the text to appear out of the container. Lastly we'll take the same borders we had on the name and rarity containers, but with directions swapped, and add a similar but bigger box shadow around it to give us the thick card attack border of the original card. All together that gives us this class.
+```
+.frame--text-stats {
+  border-bottom: 1px solid #fff;
+  border-left: 1px solid #1a5b7b;
+  border-top: 3px solid #171314;
+  border-right: 2px solid #171314;
+  box-shadow: 
+  1px 0 0 4px #0d80b6,
+  -3px 3px 3px 5px #171314;
+  margin-bottom: 7px;
+  font-size: 1.2rem;
+  position: absolute;
+  right: -12px;
+  bottom: -20px;
+  color: white;
+  padding: 0.06125rem .875rem;
+  margin-right: 5px;
+}
+```
+Which gives us the final finished card!
+<div className="flex justify-center">
+  <div className='mtg-card not-prose'>
+    <div className="card--background">
+      <div className="card--frame">
+        <div className="frame--header">
+          <p className="card--name ">Stephen Wilson</p>
+          <div className='mana-icon-container'>
+          <i className="mana-icon ms ms-cost ms-1"></i>
+          <i className="mana-icon ms ms-cost ms-u"></i>
+          </div>
+        </div>
+        <img src="/images/self-portrait2.png" alt="" className="frame--art" />
+        <div className="frame--rarity">
+          <div className="flex align-center ml-1 type-container" style={{width: '100%'}}>
+            <div className="frame--rarity-circle"></div>
+            <p className="frame--rarity-type">Creature - Human Wizard</p>
+          </div>
+          <img src="/images/r.svg" alt="SOI-icon" className="rarity-icon"/>
+          
+        </div>
+        <div className="frame--text">
+          <p className="frame--text-description frame-text-margin">When Stephen Wilson enters the battlefield, move all Bug type creatures on the battlefield to the graveyard.</p>
+          <p className="frame--flavour-text">What do you mean you deployed on a friday!?</p>
+          <p className="frame--text-stats">3/2</p>
+        </div>
+        <div className="frame--misc-info">
+          <div className="frame--misc-artist">
+            <p>54/297 R</p>
+            <p>SOI &#x2022; EN Seb McKinnon</p>
+          </div>
+          <div className="frame--misc-center"></div>
+          <div className="frame--misc-copyright">
+            &trade; &amp; &#169; 2016 Wizards of the Coast
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+#### Closing thoughts
+In the future when handling components like this, I may consider using grid for the general layout instead of flex. Flex made handling the inner elements a breeze, but it gives some of the row components the ability to fill unused space which makes juggling the font sizes and padding/margin of parent containers somewhat of a pain, although still doable as shown here. Flex has a great strength in making inline elements very easy to work with and align, but when used with complex layouts it tends to make keeping everything fit to a container and be readable somewhat of a juggling act with the traditional pain points of fix one thing, mess up another. 
+
+The card can be resized if willing to mess around with some of the font sizes, but again, I'd warn against letting the width get below 340px as it becomes very difficult to read. At that point, you'd be better of with just using an image. But that's how the card can be remade using just HTML and CSS. It was a fun exercise, and I learned a lot about complex box shadows and borders which was nice. The rarity circle in particular was fun to tweak to get it to look correct, and I'm surprised at how much of a difference a box shadow can make on a border when done well. 
+
+I'll be keeping those in mind for future use, and lastly I'll think about separating responsibilities of layout to grid and inline elements to flex whenever possible as getting the last bit of padding on the name and type elements was somewhat of a guessing game if I'm to be completely honest. I did manage it though, but won't be try that sort of approach again if I can help it. 
+
+I hope this development blog on a CSS challenge was interesting and insightful to you, and thank you for taking the time to read it.

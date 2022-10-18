@@ -43,7 +43,7 @@ const Home: React.FC<Props> = (props: Props) => {
       />
       <section className={styles["about-section"] + ' max-w-5xl mb-8'} id='about-section'>
         <h1 className={styles['greeting'] + ' font-bold text-xl md:text-3xl'}> Hi, I'm Stephen, a fullstack web developer in South Carolina.</h1>
-        <div className={styles["mtg-card"]}>
+        <div className={styles["mtg-card-area"]}>
         <MTGCard/>
         </div>
         <div className={styles["about-description"] + " mb-6"}>

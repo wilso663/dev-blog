@@ -7,6 +7,7 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 
 import BlogNav from '../../components/BlogNav'
 import Footer from '../../components/Footer'
+import MTGCard from '../../components/MTGCard'
 import StrayButton from '../../components/StrayButton'
 import { IPost } from '../../types/post'
 import { getPost, getAllPosts } from '../../utils/mdxUtils'
@@ -17,7 +18,7 @@ type PostPageProps = {
   frontMatter: Omit<IPost, 'slug'>;
 }
 //trying out injecting components into MDXRemote
-const components = { StrayButton }
+const components = { MTGCard, StrayButton, Link, Image }
 
 const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps) => {
   return(
@@ -39,8 +40,10 @@ const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps)
     <div className="prose pt-4 w-full max-w-5xl mx-auto" style={{width: '100%'}}>
       <article className="mb-4 pb-8">
  
- 
-      <p className="text-sm text-gray-300">{frontMatter.date}</p>
+      <div className="flex flex-col md:flex-row justify-between">
+        <p className="text-sm text-gray-300 my-0">{frontMatter.date}</p>
+        <p className="text-sm text-gray-300 mt-1 md:my-0 md:mr-1 ">Photo by: {frontMatter ? frontMatter.thumbnailAttr: 'Unknown'}</p>
+      </div>
       <p className='font-bold'>{frontMatter.description}</p>
 
       <MDXRemote {...source} components={components} /> 

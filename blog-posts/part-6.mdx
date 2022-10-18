@@ -1,0 +1,234 @@
+---
+title: 'Part 6 - How the blog was made: ReCaptcha v3'
+layout: 'post'
+date: 'September 11, 2022'
+description: Adding spam protection to our contact form is essential. Web crawlers and bots are very common and will search around for vulnerable sites to abuse.
+thumbnail: /images/blog-thumbnails/secret-key.jpg
+thumbnailAttr: 'Arget at Unsplash.com'
+---
+
+That's why it's very important to setup spam protection on any deployed site that makes a call to an external service via a post request like we have. Any user can run up the costs by spamming the contact form, even more so if the user is a bot that can send requests in rapid succession. This could rack up large costs from the service, or get our service account closed. So we'll want to add some form of spam protection, and in this site I've chosen ReCaptcha v3. V3 is a little different from the traditional ReCaptcha in that it doesn't ask the user to solve a question by clicking pictures or typing out some difficult to read words, but instead produces a spam probability based on how they interact with the site. You can wrap the entire web page in a provider from google's ReCaptcha service and the provider will determine that score from the moment the page is accessed. I'll show how to set that score in this tutorial, but to get started we need to get an API key from google's ReCaptcha v3 at [google.com/recaptcha](google.com/recaptcha) and in the admin console you can register a new site with v2 or v3. To the domains menu, add the domain localhost if testing from a local server and the domain you're going to deploy your site, and then accept the terms. On the next page you'll be given a site key and a secret key, add both to a env.local file in your root directory.
+```
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=YOURSITEKEY
+RECAPTCHA_SECRET_KEY=YOURSECRETKEY
+```
+Notice the NEXT_PUBLIC addition to the site key declaration. That's because we'll need to expose it to the front end part of the application for the provider to authenticate the recaptcha service. Having the NEXT_PUBLIC prepended keyword allows us to call the variable in the front end portion of our application.  
+
+Now, I recommend using a package for recaptcha v3 in a React based application, so I'm using the react-google-recaptcha-v3 package. 
+```
+yarn add react-google-recaptcha-v3
+/// or
+npm add react-google-recaptcha-v3
+```
+Once added, we can wrap our application with the provider. You can also wrap portions of the application with the provider instead, but my index page is the portfolio home page, so I'll be wrapping the entire application.
+_app.tsx
+```
+import '../styles/globals.css'
+import type { AppProps } from 'next/app'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
+import Head from 'next/head'
+
+const siteKey = process.env['NEXT_PUBLIC_RECAPTCHA_SITE_KEY']
+
+function MyApp({ Component, pageProps }: AppProps) {
+
+  return (    
+    <GoogleReCaptchaProvider
+    reCaptchaKey={siteKey}
+    scriptProps={{
+      async: false, // optional, default to false,
+      defer: true, // optional, default to false
+      appendTo: "body", // optional, default to "head", can be "head" or "body",
+      nonce: undefined,
+    }}>
+      <Head>
+        <title>Portfolio &amp; Blog</title>
+      </Head>
+    <Component {...pageProps} />
+    </GoogleReCaptchaProvider>
+  )
+}
+
+export default MyApp
+```
+
+Notice that the Provider is around the entire page component, so anywhere on the site, the provider will be calculating that spam probability in the background.
+
+But now, we'll need to do two things, add the recaptcha service into our contact form as well as the API call to the email service.
+
+#### ContactForm.tsx
+
+add the imports and the useGoogleReCaptcha hook to our Form component
+```
+import { ToastContainer, toast } from "react-toastify"
+import { useGoogleReCaptcha, GoogleReCaptcha } from "react-google-recaptcha-v3"
+import 'react-toastify/dist/ReactToastify.css'
+import { useEffect } from "react"
+import {useForm} from 'react-hook-form'
+import LoadingSpinner from './LoadingSpinner'
+
+const ContactForm: React.FC = () => {
+   const { executeRecaptcha } = useGoogleReCaptcha();
+}
+```
+We'll add a try catch block to our onSubmit function so it doesn't execute if the recaptcha token isn't loaded and we'll also append the recaptcha token to our form data. This way, if the recaptcha token gets a failed response due to detecting spam, it will simply not send more requests until the page is reloaded, which a bot will not do.
+```
+  const onSubmit = async (data: object) => {
+
+    if(!executeRecaptcha){
+      return;
+    }
+
+    try{
+      const token = await executeRecaptcha()
+      const dataWithToken = {
+        token,
+        ...data
+      }
+      const response = await saveFormData(dataWithToken)
+      if(response.status === 400) {
+        //Expect response to be a JSON response with structure
+        //{"fieldName": "error message for that field"}
+        const fieldToErrorMessage: {[fieldName: string]: string} = await response.json()
+        for(const [fieldName, errorMessage] of Object.entries(fieldToErrorMessage)){
+          setError(fieldName, {type: 'custom', message: errorMessage})
+        }
+      } else if ( response.ok) {
+        toast.success("Successfully sent")
+      } else {
+        toast.error("An unexpected error occurred while saving, please try again.")
+      }
+    } catch(error){
+      toast.error("An unexpected error occurred while saving, please try again.")
+      
+    }
+
+  }
+```
+For the contact form component, we only need to add a nested GoogleReCaptcha component inside the form.
+```
+return (
+    <form className="" onSubmit={handleSubmit(onSubmit)}>
+      <GoogleReCaptcha/>
+      <div className="flex w-full mb-4 flex-col md:flex-row" >
+        <label htmlFor="name">
+        </label>
+        <input className="rounded-md flex-1 md:mr-2 px-4 py-2" 
+               placeholder="Enter your name" 
+               type="text" 
+               required={true} 
+               {...register("name", {required: true})} 
+               style={{backgroundColor: "#f9f9f9"}}/>
+        <div className="error text-red-500">{errors["name"]?.message as string}</div>
+        <label htmlFor="email">
+        </label>
+        <input className="rounded-md flex-1 mt-4 md:mt-0 md:ml-2 px-4 py-2" 
+               placeholder="Enter your email address" 
+               type="email" 
+               required={true} 
+               autoComplete="email" 
+               {...register("email", {required: true})} 
+               style={{backgroundColor: "#f9f9f9"}} />
+        <div className="error text-red-500">{errors["email"]?.message as string}</div>
+      </div>
+      <label htmlFor="message">        
+      </label>
+      <textarea className="rounded-md block w-full px-4 py-2" 
+                placeholder="Enter your message" 
+                required={true}
+                rows={4} 
+                style={{backgroundColor: "#f9f9f9"}}
+                {...register('message', {required: true})}>
+      </textarea>
+      <div className="error text-red-500">{errors["message"]?.message as string}</div>
+
+      <button className="bg-black px-6 py-2 text-white rounded-md  flex mt-5 items-center hover:text-green-500" 
+              disabled={isSubmitting}>
+        {isSubmitting ? <LoadingSpinner/> : "Send"}
+      </button>
+      <ToastContainer position="bottom-center" />
+    </form>
+  );
+```
+
+That wil cover the front end portion, but now we need to configure our API to handle the recaptcha responses. To simplify this, I've actually added axios to handle the post request when verifying the ReCaptcha
+```
+npm install axios
+// or 
+yarn add axios
+```
+
+But you'll see that extrapolating a helper function on verifying the captcha simplifies the code to basically needing a try catch block on the captcha response, and then we can handle each exception as needed.
+#### form.ts
+```
+import type { NextApiRequest, NextApiResponse } from 'next'
+import axios from 'axios'
+const mail = require('@sendgrid/mail')
+
+type Data = {
+  status: string,
+  [fieldName: string]: string;
+}
+
+const verifyRecaptcha = async (token:string) => {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY
+  var verificationURL = 
+  "https://google.com/recaptcha/api/siteverify?secret=" +
+  secretKey + "&response=" + token;
+
+  return await axios.post(verificationURL)
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  try {
+    //Captcha Verification
+    const token = req.body.token;
+    const response = await verifyRecaptcha(token)
+    if(response.data.success && response.data.score >= 0.5){
+      //Email setup
+      mail.setApiKey(process.env.SENDGRID_API_KEY)
+      const body = req.body
+      const message = `
+        Name: ${body.name} \r\n
+        Email: ${body.email} \r\n
+        Message: ${body.message} \r\n
+      `
+      const emailData = {
+        to: process.env.PERSONAL_EMAIL,
+        from: 'portfolio@swilsoncode.dev',
+        subject: 'New Contact message from swilsoncode.dev',
+        text: message,
+        html: message.replace(/\r\n/g, '<br>')
+      }
+      mail.send(emailData).then(() => {
+        res.status(200).json({ status: 'Ok' })
+      })
+    } else {
+      return res.status(400).json({
+        status: 'Failed',
+        message: 'The Captcha Service determined this submission was spam.'
+      })
+    }
+
+
+  } catch(error){
+    res.status(400).json({
+      status: 'Failed',
+      message: 'Something went wrong with the Captcha service. Please try again.',
+    })
+  }
+}
+
+```
+
+Outside of the exception handling, the piece to keep in mind is the response.data.success and response.data.score
+```
+  if(response.data.success && response.data.score >= 0.5){...}
+```
+You can control the probability of spam here if you want. I've set it to the default confidence of 50% in this example, but I've noticed from my own testing that it is difficult for me as a test malicious user to trigger the score myself if I don't set it to higher than 80%. If you want to filter out malicious human users that are simply spamming the email contact form without automation, I would consider setting it around .8 to .9.
+
+
+But, there you have it. That's all that's required to set up spam protection on your Next.js site with ReCaptcha V3, and with that you have the majority of how this site was built. Up next I'm going to go into some project ideas for building a beginner to intermediate full stack portfolio. Stay tuned!

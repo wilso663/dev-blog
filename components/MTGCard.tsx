@@ -16,7 +16,7 @@ const MTGCard = () => {
             <i className={styles['mana-icon'] + " ms ms-cost ms-u"}></i>
             </div>
           </div>
-          <img src="/images/mockup-portrait.jpg" alt="" className={styles["frame--art"]} />
+          <img src="/images/self-portrait2.png" alt="" className={styles["frame--art"]} />
           <div className={styles["frame--rarity"]}>
             <div className="flex align-center ml-1 type-container" style={{width: '100%'}}>
               <div className={styles["frame--rarity-circle"]}></div>

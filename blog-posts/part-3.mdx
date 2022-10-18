@@ -1,0 +1,107 @@
+---
+title: 'Part 3 - How the blog was made: Pagination'
+layout: 'post'
+date: 'September 7, 2022'
+description: Pagination, a very commonly used pattern in blog pages or e-commerce sites.
+thumbnail: /images/blog-thumbnails/pagination.png
+thumbnailAttr: 'John Troutman at Medium.com'
+---
+There are lots of ways to implement this feature, but a lot of how to go about it also depends on your data source. Some APIs will directly separate the appropriate amount of data per page for you if the API was made with that requirement in mind. So, in that case it's a simple matter of fetching the data with a specific page query. I've done something much simpler however, to focus more on the front end implementation of the feature. Because of this, and the ease of use of calling data from our server with getStaticProps in Next.js, I'm having all the posts be passed into props to the blog home page, which I can then separate to only display a few posts at a time. The code for getting all of the mdx file content and front matter to the blog home page is actually pretty extensive, so much so that I covered the entirety of it in a previous blog post <span><Link href="../blog/qq-new3">here</Link></span>. But this post is just about the pagination portion. So to start off, I'm getting all the posts with the following attributes through getStaticProps.
+#### blog.tsx
+```
+export const getStaticProps: GetStaticProps = async () => {
+  const posts = getAllPosts([
+    'slug',
+    'date',
+    'thumbnail',
+    'thumbnailAttr',
+    'title',
+    'description',
+  ]);
+
+  return { props: { posts } };
+};
+```
+And with that we'll just can destructure our props in the Blog Home page component to retrieve them. 
+
+I had decided in the original mockup that I wanted to have four featured articles be displayed at the top of the page that aren't included in the pagination feature and the rest of the articles be below them. So, I first separated the articles into two sections. I could just have two slices here and the code would look something like this
+```
+const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
+  const featuredArticles = posts.slice(0,4)
+  const otherArticles = posts.slice(4)
+}
+```
+Now to consider the actual requirements for pagination with React, I need
+1. The amount of articles to display at per page
+2. State to hold the current page number
+3. Methods for handling the next and previous page button clicks that will need to update the currently displayed articles 
+4. Buttons for changing the page number 
+5. A useEffect hook on the currently displayed articles to rerender whenever the page number is updated
+
+#### 1. The amount of articles to display at per page
+One is pretty simple it's just a variable, and generally my convention with a constant Integer I write it as all uppercase.
+```
+  const PAGE_LENGTH = 6
+```
+#### 2. State to hold the current page number
+Two is also very simple, it's just a number state, that I'll initialize to 0 to make it easier to understand when working with the buttons since my otherArticles variable is its own array.
+```
+  const [pageNumber, setPageNumber] = useState(0)
+```
+#### 3. Click Handling Methods
+```
+  const handlePrevClick = () => {
+    if(pageNumber === 0){
+      //Do nothing
+    } else if(pageNumber > 0){
+      setPageNumber(pageNumber - 1)
+    } else {
+      //in case pageNumber has been set to something it shouldn't, reset it to 0
+      setPageNumber(0)
+    }
+  }
+
+  const handleNextClick = () => {
+    if(pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1){
+      //Do nothing
+    } else if(pageNumber < Math.ceil(otherArticles.length/PAGE_LENGTH)-1){
+      setPageNumber(pageNumber + 1)
+    } else {
+      //in case pageNumber has been set to something it shouldn't, reset it to the last page
+      setPageNumber(Math.ceil(otherArticles.length/PAGE_LENGTH)-1)
+    }
+  }
+```
+Handling the previous click is fairly simple, we just don't want the page number to go below 0 and we essentially just subtract 1 from the current page number otherwise.
+Handling the click to retrieve the next page is a little more difficult, but a similar idea. The main idea to understand is this piece
+```
+pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1
+```
+When assigning which slice of articles to display, I need to divide the total number of articles by 6, which can give a remainder, but I can't just floor the number in case there is no remainder; the page number will be one beyond what I'm expecting in that case. So instead, keep it consistent by ceiling everything and subtracting 1 from the total, keeping in mind that we're starting the page number at 0. Starting from 0 as the first page, the last page needs to be the (total articles) / (articles per page) - 1 and we ceiling the dividend to display the next page if there's a remainder.
+
+#### 4. 
+```
+<button className={`${pageNumber === 0 ? grayTextClass : whiteTextClass}`} 
+  onClick={handlePrevClick}>&lt;&lt; Prev
+</button>
+    <span className="">Page {pageNumber+1}</span>
+<button  className={`${pageNumber === Math.ceil(otherArticles.length/PAGE_LENGTH)-1 ? grayTextClass : whiteTextClass}`}
+  onClick={handleNextClick}> Next &gt;&gt;
+</button>
+```
+This part's fairly simple. To give the user feedback if there are no more previous or next pages, I've greyed out the button in those respective cases. The button isn't disabled when there are no previous or next pages, the users can still click on them and get click feedback, but the handle click functions handle those cases by simply doing nothing.
+#### 5.
+Lastly we need do something to rerender the page whenever the page number is updated so we can display the current page's articles. And we can easily do that with a useEffect hook on pageNumber, like so
+```
+useEffect(() => {
+  currentOtherArticles = otherArticles.slice(pageNumber * PAGE_LENGTH, PAGE_LENGTH * (pageNumber+1))
+}, [pageNumber])
+```
+We've got the pageNumber in the dependency array, and we're updating the current articles array to the new 1 to 6 articles of the new page number. i.e.
+slice(0 x 6, 1 x 6).
+
+And that's all that's needed to get a basic pagination feature up from scratch in React. No need for external libraries when the logic is simply slicing your data set into page lengths. 
+
+Now, there is a potential front end snag with this, which you can find on this blog page and that's because the layout of the data we're display is inconsistent, the page buttons will move depending on the number of rows in the layout. I've used grid here, and the number of rows in the grid changes depending on if there are 1 to 3 and 4 to 6 articles on that page. So without a minimum grid size, the previous and next buttons can move. This can be remedied by forcing a minimum size, but that's a design choice that you can make if using a similar approach.
+
+Up next, I'll cover the portfolio section of the site and how the contact form's client side validation works.

@@ -24,7 +24,7 @@ export default async function handler(
     //Captcha Verification
     const token = req.body.token;
     const response = await verifyRecaptcha(token)
-    if(response.data.success && response.data.score >= 0.5){
+    if(response.data.success && response.data.score >= 0.7){
       //Email setup
       mail.setApiKey(process.env.SENDGRID_API_KEY)
       const body = req.body
@@ -42,15 +42,16 @@ export default async function handler(
       
       }
       res.status(200).json({ status: 'Ok' })
+      // mail.send(emailData).then(() => {
+      //   res.status(200).json({ status: 'Ok' })
+      // })
     } else {
       return res.status(400).json({
         status: 'Failed',
         message: 'The Captcha Service determined this submission was spam.'
       })
     }
-  // mail.send(emailData).then(() => {
-  //   res.status(200).json({ status: 'Ok' })
-  // })
+
 
   } catch(error){
     res.status(400).json({

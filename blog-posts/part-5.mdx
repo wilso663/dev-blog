@@ -1,0 +1,74 @@
+---
+title: 'Part 5 - How the blog was made: Contact form email service API'
+layout: 'post'
+date: 'September 10, 2022'
+description: Sending emails from a portfolio site is easy in Next.js with SendGrid's email service.
+
+thumbnail: /images/blog-thumbnails/mail.jpg
+thumbnailAttr: 'Brett Jordan at Unsplash.com'
+---
+#### Note that this guide is assuming deploying this contact form to a domain, which will need to have DNS entries added to it since we're using an external service. You will need to have a domain ready to use to be able to call this email API service. I suggest getting a domain from google domains to follow this guide, but you can use any as long as you can add DNS entries to it.
+
+While making an API call from a page within a Next.js application is fairly easy, only needing to make a call to whichever file in our pages/api directory we're using, there are some choices when it comes to sending an email from one of these API calls. 
+
+I've also seen some applications that have contact forms that simply let the user use their own service like microsoft outlook instead of sending an email directly from an API call in the contact form. For this particular contact form though, I've chosen SendGrid due to its simplicity. To send emails with their service, you'll need a service account and once inside in the dashboard you'll need to authenticate a domain to send them from. Of course, this will mean you'll need to buy a domain before deploying, even to be able to test the application. 
+I've purchased a domain using google domains, which will also allow you to send emails from localhost for testing purposes. 
+
+Once you've purchased a domain, you can authenticate it within SendGrid's dashboard under settings -> Sender Authentication. Enter the domain name you've purchased, and from there you'll be given 3 DNS names and Canonical name pairs to write down that we'll need to add as DNS entries for the domain. Doing this is similar between domain providers, but the menus on the sites will be different. If using a provider other than google domains, please follow the documentation for that provider listed on SendGrid during this step. 
+
+For google domains, you need to navigate to domains.google.com where you purchased the domain and go into the My domains menu and into the "Manage" menu for the domain you want to add the email service. In there, go into the DNS menu, then there will be an drop down menu for Resource records, and we want to add 3 custom records of type CNAME there. Add each individual DNS name into the host name field and the corresponding Canonical name into the Data field and click save once all 3 are added. 
+
+Once that is done, you can go back to the sendgrid Authenticate Your Domain menu where you got the DNS and Canonical names, and click the checkbox that you've added the records and then click the Verify button. Note that having the DNS entries changes become recognized by google domains can take some time, but should be within 1 or 2 minutes. If the changes aren't working after 15 minutes, you may have input the DNS entries incorrectly. However, if it is working correctly, the SendGrid menu will tell you "Your authenticated domain was verified" and then you can make an API key and begin coding the email service call into your application. Create the API key and save a reference to it somewhere because you won't be able to retrieve it after creating it.
+
+To save this in our Next.js application, create a file in the root directory of our folder called env.local and add the line
+```
+SENDGRID_API_KEY="SG.YOURAPIKEY"
+```
+Replacing YOURAPIKEY with the API key you got from SendGrid after the SG. portion. By doing this we'll store our API key in what's called an environment variable file, to make it accessible to our application from our server, without exposing it to the front end network resources. Robust applications will do this for security purposes and also to have multiple settings for different environments you might see in a company project, where it's common to have 3 or more environments like development, demo, and production. You can setup multiple API keys if you desire, but for this application I'll just be showing how to use one.
+
+Now with the difficult part out of the way, we need to use a package called sendgrid/mail to be able to use sendgrid's API. 
+```
+yarn add @sendgrid/mail
+// or
+npm install @sendgrid/mail --save
+```
+
+In our pages/api directory, create a new file for our form, I called mine form.ts and in it we'll need just a few lines to get us started
+
+with the default boilerplate of a Next.js api file, add the sendgrid mail import using a require statement and also mail.setApiKey(process.env.SENDGRID_API_KEY) and use the mail.send method on the request body that we'll format as shown below
+#### form.ts
+```
+import type { NextApiRequest, NextApiResponse } from 'next'
+const mail = require('@sendgrid/mail');
+
+type Data = {
+  name: string
+}
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  mail.setApiKey(process.env.SENDGRID_API_KEY)
+  const body = req.body
+  const message = `
+    Name: ${body.name} \r\n
+    Email: ${body.email} \r\n
+    Message: ${body.message} \r\n
+  `
+  const emailData = {
+    to: process.env.PERSONAL_EMAIL,
+    from: 'email@youremail.dev',
+    subject: 'New Contact message from your site',
+    text: message,
+    html: message.replace(/\r\n/g, '<br>')
+  
+  }
+  mail.send(emailData).then(() => {
+    res.status(200).json({ status: 'Ok' })
+  })
+}
+```
+I've excluded the error handling in this section for simplicity's sake, but you can and should add conditionals for what to do if the response isn't the 200 OK status. It is possible for a savvy user to simply call the form API route without using the contact form and send garbage data that way, so you'll want to add some exceptions for garbage data.
+
+It should also be noted that it is possible to send multiple emails rapidly with this basic setup, so it would be very prudent to setup some spam protection service, like Heroku's spam protection if you deploy there, or ReCaptcha. I'm deploying with Vercel, so I've chosen ReCaptcha v3 for this application which I will show how to setup in the next blog post.
