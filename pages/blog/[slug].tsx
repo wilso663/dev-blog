@@ -6,9 +6,7 @@ import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 
 import BlogNav from '../../components/BlogNav'
-import Footer from '../../components/Footer'
 import MTGCard from '../../components/MTGCard'
-import StrayButton from '../../components/StrayButton'
 import { IPost } from '../../types/post'
 import { getPost, getAllPosts } from '../../utils/mdxUtils'
 import Link from 'next/link'
@@ -17,12 +15,12 @@ type PostPageProps = {
   source: MDXRemoteSerializeResult;
   frontMatter: Omit<IPost, 'slug'>;
 }
-//trying out injecting components into MDXRemote
-const components = { MTGCard, StrayButton, Link, Image }
+//For injecting components into MDXRemote
+const components = { MTGCard, Link, Image }
 
 const PostPage: React.FC<PostPageProps> = ({source, frontMatter}: PostPageProps) => {
   return(
-    <>
+  <>
   <div className="ml-4 mr-4 mb-8 md:ml-28 md:mr-28">
     <BlogNav/>
     

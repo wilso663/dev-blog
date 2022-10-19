@@ -17,9 +17,6 @@ const Blog: React.FC<PostProps> = ({posts}: PostProps) => {
   const [pageNumber, setPageNumber] = useState(0)
   //Because there will always be 4 featured articles, I'm hard coding the reference to them here
   const mainArticle = posts[0]
-  const articleTwo = posts[1]
-  const articleThree = posts[2]
-  const articleFour = posts[3]
   const featuredArticles = posts.slice(1,4)
   const otherArticles = posts.slice(4)
   const grayTextClass = 'text-gray-400'

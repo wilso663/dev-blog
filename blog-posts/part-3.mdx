@@ -1,10 +1,10 @@
 ---
 title: 'Part 3 - How the blog was made: Pagination'
 layout: 'post'
-date: 'September 7, 2022'
+date: 'October 7, 2022'
 description: Pagination, a very commonly used pattern in blog pages or e-commerce sites.
-thumbnail: /images/blog-thumbnails/pagination.png
-thumbnailAttr: 'John Troutman at Medium.com'
+thumbnail: /images/blog-thumbnails/pagination.jpg
+thumbnailAttr: 'Igor Dresjan A.P. at Unsplash.com'
 ---
 There are lots of ways to implement this feature, but a lot of how to go about it also depends on your data source. Some APIs will directly separate the appropriate amount of data per page for you if the API was made with that requirement in mind. So, in that case it's a simple matter of fetching the data with a specific page query. I've done something much simpler however, to focus more on the front end implementation of the feature. Because of this, and the ease of use of calling data from our server with getStaticProps in Next.js, I'm having all the posts be passed into props to the blog home page, which I can then separate to only display a few posts at a time. The code for getting all of the mdx file content and front matter to the blog home page is actually pretty extensive, so much so that I covered the entirety of it in a previous blog post <span><Link href="../blog/qq-new3">here</Link></span>. But this post is just about the pagination portion. So to start off, I'm getting all the posts with the following attributes through getStaticProps.
 #### blog.tsx

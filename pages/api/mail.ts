@@ -5,6 +5,7 @@ type Data = {
   name: string
 }
 
+//Default example API Boilerplate 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
