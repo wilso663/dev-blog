@@ -42,7 +42,7 @@ const Home: React.FC<Props> = (props: Props) => {
       <HomeNav
       />
       <section className={styles["about-section"] + ' max-w-5xl mb-8'} id='about-section'>
-        <h1 className={styles['greeting'] + ' font-bold text-xl md:text-3xl'}> Hi, I'm Stephen, a fullstack web developer in South Carolina.</h1>
+        <h1 className={styles['greeting'] + ' font-bold text-xl md:text-3xl'}> Hi, I'm Stephen, a Fullstack C# .NET developer in South Carolina.</h1>
         <div className={styles["mtg-card-area"]}>
         <MTGCard/>
         </div>
@@ -55,7 +55,7 @@ const Home: React.FC<Props> = (props: Props) => {
 
             <p>My experience with Atos-Syntel has given me the opportunity to colloborate with large and small teams, multiple timezones, and directly with customers has allowed me to adapt and learn multiple technology stacks and roles.</p>
 
-            <p>I am currently looking for a role as a Fullstack Developer.</p>
+            <p>I am currently looking for a role as a C# .NET Developer.</p>
             <div className="cta-buttons flex mt-5 items-center">
               <a className="text-xs md:text-sm flex mr-5 px-2 py-2 
                             md:px-3 md:py-4 bg-black text-white 

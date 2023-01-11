@@ -1,0 +1,41 @@
+---
+title: "Events that cause people to change tech stacks: Advent of Code"
+layout: "post"
+date: "January 11, 2023"
+description: If LINQ is witchcraft, than call me Gandalf, because it's awesome!
+thumbnail: /images/blog-thumbnails/adventofcode.png
+thumbnailAttr: "David Cassel at thenewstack.io"
+---
+
+Dropping a tech stack entirely doesn't happen very often, but when someone encounters a different technology that completely changes the way they feel about coding, it can happen, and it happened to me. One night, a friend of mine, who is also a professional developer, mentioned that he and his friends were going to be trying a friendly coding competition called [advent of code](https://www.adventofcode.com) and invited me to take a look at it. I wasn't initially interested. I had too much to do, it was the holidays, and thought, "Why would I spend so much energy on a contest when I'm struggling to get a job. I don't have time for this and I'm not a competitive coder". 
+
+I put it aside, that is until they mentioned it again as a good exercise to learn a new language. My friend was trying it in Kotlin, a Java derivative, a I thought, maybe I could try C# .NET. It was a language I had looked at previously when I used ASP.NET for the backend of a small project I made years ago. After dealing with some minor but consistent annoyances with backend form validation with Next.js, I remembered how easy it was to do the same thing in ASP.NET. So, I caved, and late one night decided to take a look. 
+
+For those that are unfamiliar with how advent of code works, it's a fairly serious yearly competition, where each night at 12 AM EST, a new puzzle unlocks for that day, and individual users are given a unique textfile with the puzzle input. Therefore, you can use any language you like to complete it, the only thing that matters is the answer. The contest runs from December 1st to 25th each year and even has a leaderboard for completion time, that some people take very seriously.
+ <img
+    src="/images/advent-leaderboard.png"
+    alt="Advent of Code Leaderboard completion counts"
+    height="1640px"
+    width="840px"
+/>
+
+I started on day 6, and it was slightly easier than expected puzzle that given a very long string input, look for the first substring that has N unique characters, and return the index of that first character in that unique substring.  My puzzle input went to about character 3300 before finding the substring of length 14 that the puzzle wanted. My solution was straightforward with 2 functions: one to find if a substring has all unique characters by using a Set and another to find the first index of a unique substring of a given length. I didn't have many difficulties, which surprised me, but what really blew me away was the discussion about the problems. People were sharing their solutions after solving, and once I had solve it I went and looked at what people had done in C# to see if I could glean any expertise from their solutions. What I saw was, in my opinion, elegant code golf, and the LINQ library of .NET allowed for so many easy to understand, one line, fast solutions to problems. I had never encountered LINQ and I had no idea what it did, but when I saw method calls like OrderByDescending, Take, Sum, FirstOrDefault, I couldn't believe it. Being able to quickly filter and sort any collection and extract pieces with precision like that takes a lot of code in other languages, particularly JavaScript, which is what I had been learning to use for the past several months. To say that LINQ was a breath of fresh air would be an understatement. Being able to use LINQ felt like cheating in this competition. 
+
+The next day, I decided to try to implement some of what I had seen. Day 7 wanted the user to implement a tree structure that functions like a file directory system. The text input would indicate if the line was a file, directory, and indicators for nested directories, meaning that we would need to keep track of the size of each nested file and directory for the entire tree. At first I was a little confused as to how to go about that, but I decided to trust the data structures and implement them as they are requested, and I surprised myself with how easy the problem became. I had two classes, one for a directory class with properties for a name, a directory parent, a list of subdirectories, a list of files, and a size. The second was a file class with properties for a size, name, and a parent directory.  
+
+Straightfoward enough, but when this is where I tried to implement LINQ. In the Directory class, I needed to get the size of a directory, which meant also summing all files and subdirectories, which I tried with this
+```
+public int Size => SubDirectories.Sum(sd => sd.Size) + Files.Sum(f => f.Size);
+```
+This one liner solution would have been quite a chore for me in another language, but because my two lists of files and subdirectories could use LINQ, that's all I had to do. The first half of the puzzle wanted the sum of all file sizes that were less than 100k bits and because my directory sizes were kept as a list, that was as simple as this
+```
+int totalSum = directorySizes.Where(x => x <= 100000).Sum();
+```
+
+I legitimately felt like I had just cheated the problem by getting it so simply. My solution felt elegant, and it was mine. I had done that. I had never felt so capable in solving what's supposed to be a competitive problem.
+
+To keep this blog post a reasonable length, I continued trying until day 16 where I encountered an extremely difficult graph theory problem that demanded only what I could figure was a combination of dynamic programming as well as graph theory. The solution could have potentially trillions of paths with a breadth first search, so somethign else was needed. Dynamic programming and graph theory are honestly two of my weakest subjects, so I bowed out, feeling pretty good about what I had accomplished. If you'd like to see my solutions to the puzzles, you can find my code [repo here](https://www.github.com/wilso663/adventofcode2022) And more importantly, I had felt enjoyment out of programming again, instead of feeling like I was doing it for the main purpose of being competitive to an employer.
+
+After doing that, I decided to revisit an old course for ASP.NET and Angular, and found that I was able to implement things like form validation, front and back, authentication, guards, and much more in a much more readable and easier way. So, I've kept doing that, and decided I would switch my focus towards .NET development since I've enjoyed it so much. Currently, I'm working on a project from that course, which is truthfully a follow along project, but I feel like I could implement my own Backend APIs for use with any frontend framework pretty easily after following this course.  
+
+So, that's what I'm going to do. I'll keep following this course and once I'm done, I'll make an attempt at implementing a backend API with ASP.NET for something else. What I currently have in mind is an automated youtube channel that uses twitch.tv clips for any particular game. It would download a particular days clips, and with some manual clip selection, could be spliced into a video and uploaed to youtube automatically. I'm not sure which technologies I would use for this, but I suspect interacting with the youtube interface automatically would be made easier with Python's Selenium package. The details will need to be investigated, but that will have to wait until I'm finished with the current project. Stay tuned!
